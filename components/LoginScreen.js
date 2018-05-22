@@ -13,13 +13,14 @@ import {
   ActivityIndicator,
   Button,
   Modal,
+  StatusBar,
   Text,
   TextInput,
   View
 } from 'react-native';
 
 import styles from './../styles/Styles';
-import customStyles from './../styles/Login';
+import customStyles from './../styles/LoginStyles';
 
 export default class LoginScreen extends Component {
   static navigationOptions = {
@@ -38,14 +39,35 @@ export default class LoginScreen extends Component {
       username: '',
       password: ''
     };
+
+    StatusBar.setHidden(true);
   }
 
   componentDidMount() {
     NetInfo.isConnected.fetch().then((isConnected) => {
       this.setState({
-        networkConnection: (isConnected ? true : false)
+        networkConnection: isConnected,
+        connectivityModalVisible: !isConnected
       });
-    NetInfo.addEventListener('connectionChange', handleConnectivityChange);
+
+      if(!isConnected) {
+        setTimeout(() => {
+          this.setState({
+            connectivityModalVisible: false
+          });
+        }, 5000);
+      }
+    });
+
+    NetInfo.isConnected.addEventListener('connectionChange', (isConnected) => {
+      this.handleConnectivityChange(isConnected);
+    });
+  }
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
+      this.handleConnectivityChange(isConnected);
+    });
   }
 
   render() {
@@ -82,11 +104,11 @@ export default class LoginScreen extends Component {
           onRequestClose={() => {}}>
           <View style={styles.modal}>
             <View style={styles.modalContent}>
-              <Text>Username: {this.state.username}</Text>
-              <Text>Password: {this.state.password}</Text>
+              <Text>Username: {this.state.username} {typeof this.state.username}</Text>
+              <Text>Password: {this.state.password} {typeof this.state.password}</Text>
               <Button
                 onPress={() => {
-                  this.setModalVisible(false);
+                  this.setModalVisible('status', false);
                   ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
                 }}
                 title="Close"
@@ -102,32 +124,39 @@ export default class LoginScreen extends Component {
           visible={this.state.loaderModalVisible}
           onRequestClose={() => {}}>
           <View style={styles.modal}>
-            <ActivityIndicator size="small" color="#fffff" />
+            <ActivityIndicator size="small" color="#ffffff" />
           </View>
         </Modal>
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={this.state.connectivityModalVisible}
           onRequestClose={() => {}}>
-          <View style={styles.notifModal}>
-            {(isConnected === true ? (
-              <View style={styles.promptBoxSuccess}>Internet Connection Restored.</View>
-            ) : (
-              <View style={styles.promptBoxDanger}>No Internet Connection.</View>
-            ))}
-          </View>
+          {(this.state.networkConnection ? (
+            <View style={styles.promptBoxSuccess}>
+              <Text style={styles.colorWhite}>Connected.</Text>
+            </View>
+          ) : (
+            <View style={styles.promptBoxDanger}>
+              <Text style={styles.colorWhite}>No Internet Connection.</Text>
+            </View>
+          ))}
         </Modal>
       </View>
     );
   }
 
-  function handleConnectivityChange(isConnected) {
+  handleConnectivityChange(isConnected) {
     this.setState({
-      networkConnection: (isConnected ? true : false)
+      networkConnection: isConnected,
+      connectivityModalVisible: true
     });
 
-    NetInfo.isConnected.removeEventListener('connectionChange', handleConnectivityChange);
+    setTimeout(() => {
+      this.setState({
+        connectivityModalVisible: false
+      });
+    }, 5000);
   }
 
   setModalVisible(modalName, isVisible) {
@@ -154,7 +183,7 @@ export default class LoginScreen extends Component {
   }
 
   requestLogin() {
-    this.setModalVisible(true);
+    this.setModalVisible('status', true);
     ToastAndroid.show('Opened modal.', ToastAndroid.SHORT);
   }
 }
