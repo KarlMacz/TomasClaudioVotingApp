@@ -11,11 +11,13 @@ import {
   * Components
   */
   ActivityIndicator,
-  Button,
+  Image,
   Modal,
   StatusBar,
   Text,
   TextInput,
+  TouchableHighlight,
+  TouchableOpacity,
   View
 } from 'react-native';
 
@@ -72,49 +74,85 @@ export default class LoginScreen extends Component {
 
   render() {
     return (
-      <View style={styles.body}>
-        <View style={customStyles.page}>
+      <View
+        style={styles.body}>
+        <View
+          style={customStyles.header}>
+          <View
+            style={customStyles.headerContent}>
+            <Image
+              style={customStyles.headerLogo}
+              source={require('./../assets/img/tcc_logo.png')}
+            />
+            <Text style={customStyles.headerTitleText}>Worthy Votes</Text>
+          </View>
+        </View>
+        <View
+          style={customStyles.body}>
           <TextInput
-            autoFocus={true}
             style={styles.inputControl}
+            placeholder="Username"
             onChangeText={(text) => {
-              this.setState({username: text});
+              this.setState({
+                username: text
+              });
             }}
           />
           <TextInput
+            style={styles.inputControl}
+            placeholder="Password"
             secureTextEntry={true}
-            style={styles.inputControl}
             onChangeText={(text) => {
-              this.setState({password: text});
+              this.setState({
+                password: text
+              });
             }}
           />
-          <Button
+          <TouchableHighlight
+            style={styles.buttonPrimary}
             onPress={() => {
-              this.requestLogin();
+              this.requestLogin()
             }}
-            title="Log In"
-            color="#841584"
-            accessibilityLabel="Log In"
-          />
+            underlayColor="yellow">
+            <Text style={styles.buttonContent}>LOG IN</Text>
+          </TouchableHighlight>
+          <View
+            style={customStyles.buttonLinkBlock}>
+            <TouchableOpacity
+              style={customStyles.buttonLink}
+              accessibilityTraits="link"
+              onPress={() => {
+                this.requestLogin()
+              }}>
+              <Text>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View
+          style={customStyles.footer}>
+          <Text style={customStyles.footerText}>Copyright © 2018 Supreme Student Council of Leaders.</Text>
+          <Text style={customStyles.footerText}>All Rights Reserved.</Text>
         </View>
         <Modal
           animationType="fade"
           transparent={true}
           visible={this.state.statusModalVisible}
           onRequestClose={() => {}}>
-          <View style={styles.modal}>
-            <View style={styles.modalContent}>
+          <View
+            style={styles.modal}>
+            <View
+              style={styles.modalContent}>
               <Text>Username: {this.state.username} {typeof this.state.username}</Text>
               <Text>Password: {this.state.password} {typeof this.state.password}</Text>
-              <Button
+              <TouchableHighlight
+                style={styles.buttonPrimary}
                 onPress={() => {
                   this.setModalVisible('status', false);
                   ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
                 }}
-                title="Close"
-                color="#841584"
-                accessibilityLabel="Close"
-              />
+                underlayColor="yellow">
+                <Text style={styles.buttonContent}>CLOSE</Text>
+              </TouchableHighlight>
             </View>
           </View>
         </Modal>
@@ -123,7 +161,8 @@ export default class LoginScreen extends Component {
           transparent={true}
           visible={this.state.loaderModalVisible}
           onRequestClose={() => {}}>
-          <View style={styles.modal}>
+          <View
+            style={styles.modal}>
             <ActivityIndicator size="small" color="#ffffff" />
           </View>
         </Modal>
@@ -133,11 +172,13 @@ export default class LoginScreen extends Component {
           visible={this.state.connectivityModalVisible}
           onRequestClose={() => {}}>
           {(this.state.networkConnection ? (
-            <View style={styles.promptBoxSuccess}>
+            <View
+              style={styles.promptBoxSuccess}>
               <Text style={styles.colorWhite}>Connected.</Text>
             </View>
           ) : (
-            <View style={styles.promptBoxDanger}>
+            <View
+              style={styles.promptBoxDanger}>
               <Text style={styles.colorWhite}>No Internet Connection.</Text>
             </View>
           ))}
