@@ -1,16 +1,10 @@
 import {StyleSheet} from 'react-native';
 
-import {Fonts} from './Fonts';
-
-const dangerColor = '#c73a4e';
-const infoColor = '#5c8dbf';
-const successColor = '#5abf79';
-const primaryColor = '#4c9261';
-const warningColor = '#eacf6c';
+import {Colors} from './Colors';
 
 export default StyleSheet.create({
   header: {
-    backgroundColor: primaryColor,
+    backgroundColor: Colors.primaryColor,
     borderRadius: 450,
     marginTop: -621,
     marginLeft: -270,
@@ -18,15 +12,15 @@ export default StyleSheet.create({
     width: 900
   },
   headerContent: {
-    marginTop: 648,
+    marginTop: 675,
     marginLeft: 300,
     width: 300
   },
   headerLogo: {
     left: '50%',
-    marginLeft: -75,
-    height: 150,
-    width: 150
+    marginLeft: -50,
+    height: 100,
+    width: 100
   },
   headerTitleText: {
     color: 'white',
@@ -46,6 +40,8 @@ export default StyleSheet.create({
   },
   footer: {
     backgroundColor: '#f5f5f5',
+    borderTopColor: '#dddddd',
+    borderTopWidth: 1,
     justifyContent: 'center',
     padding: 15
   },

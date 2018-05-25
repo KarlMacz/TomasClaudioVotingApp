@@ -1,10 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-const dangerColor = '#c73a4e';
-const infoColor = '#5c8dbf';
-const successColor = '#5abf79';
-const primaryColor = '#4c9261';
-const warningColor = '#eacf6c';
+import {Colors} from './Colors';
 
 export default StyleSheet.create({
   body: {
@@ -23,7 +19,8 @@ export default StyleSheet.create({
   },
   buttonPrimary: {
     alignItems: 'center',
-    backgroundColor: primaryColor,
+    backgroundColor: Colors.primaryColor,
+    borderRadius: 4,
     padding: 15
   },
   buttonContent: {
@@ -36,9 +33,9 @@ export default StyleSheet.create({
     width: '100%'
   },
   modal: {
-    justifyContent: 'center',
     backgroundColor: 'rgba(34, 34, 34, 0.5)',
     flex: 1,
+    justifyContent: 'center',
     padding: 15
   },
   modalContent: {
@@ -47,28 +44,28 @@ export default StyleSheet.create({
     width: '100%'
   },
   promptBoxDanger: {
-    backgroundColor: dangerColor,
+    backgroundColor: Colors.dangerColor,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 25,
     paddingRight: 25
   },
   promptBoxInfo: {
-    backgroundColor: infoColor,
+    backgroundColor: Colors.infoColor,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 25,
     paddingRight: 25
   },
   promptBoxSuccess: {
-    backgroundColor: successColor,
+    backgroundColor: Colors.successColor,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 25,
     paddingRight: 25
   },
   promptBoxWarning: {
-    backgroundColor: warningColor,
+    backgroundColor: Colors.warningColor,
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 25,

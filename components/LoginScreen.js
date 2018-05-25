@@ -4,7 +4,6 @@ import {
   * APIs
   */
   NetInfo,
-  StyleSheet,
   ToastAndroid,
 
   /*
@@ -21,13 +20,20 @@ import {
   View
 } from 'react-native';
 
+import GroupedModals from './partials/GroupedModals';
+
 import styles from './../styles/Styles';
 import customStyles from './../styles/LoginStyles';
+
+import {Colors} from './../styles/Colors';
 
 export default class LoginScreen extends Component {
   static navigationOptions = {
     title: 'Login',
     header: null
+  };
+  static contentOptions = {
+    drawerLockMode: 'locked-closed'
   };
 
   constructor(props) {
@@ -43,6 +49,8 @@ export default class LoginScreen extends Component {
     };
 
     StatusBar.setHidden(true);
+    // StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
+    // StatusBar.setTranslucent(true);
   }
 
   componentDidMount() {
@@ -111,9 +119,9 @@ export default class LoginScreen extends Component {
           <TouchableHighlight
             style={styles.buttonPrimary}
             onPress={() => {
-              this.requestLogin()
+              this.requestLogin();
             }}
-            underlayColor="yellow">
+            underlayColor={Colors.primaryColorActive}>
             <Text style={styles.buttonContent}>LOG IN</Text>
           </TouchableHighlight>
           <View
@@ -122,9 +130,20 @@ export default class LoginScreen extends Component {
               style={customStyles.buttonLink}
               accessibilityTraits="link"
               onPress={() => {
-                this.requestLogin()
+                this.setState({
+                  connectivityModalVisible: true
+                });
+
+                setTimeout(() => {
+                  this.setState({
+                    connectivityModalVisible: false
+                  });
+                }, 2000);
               }}>
-              <Text>Forgot Password?</Text>
+              <Text
+                style={{
+                  color: Colors.primaryColor
+                }}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -150,39 +169,16 @@ export default class LoginScreen extends Component {
                   this.setModalVisible('status', false);
                   ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
                 }}
-                underlayColor="yellow">
+                underlayColor={Colors.primaryColorActive}>
                 <Text style={styles.buttonContent}>CLOSE</Text>
               </TouchableHighlight>
             </View>
           </View>
         </Modal>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.loaderModalVisible}
-          onRequestClose={() => {}}>
-          <View
-            style={styles.modal}>
-            <ActivityIndicator size="small" color="#ffffff" />
-          </View>
-        </Modal>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.connectivityModalVisible}
-          onRequestClose={() => {}}>
-          {(this.state.networkConnection ? (
-            <View
-              style={styles.promptBoxSuccess}>
-              <Text style={styles.colorWhite}>Connected.</Text>
-            </View>
-          ) : (
-            <View
-              style={styles.promptBoxDanger}>
-              <Text style={styles.colorWhite}>No Internet Connection.</Text>
-            </View>
-          ))}
-        </Modal>
+        <GroupedModals
+          showLoader={this.state.loaderModalVisible}
+          showConnectivity={this.state.connectivityModalVisible}
+          networkConnection={this.state.networkConnection} />
       </View>
     );
   }
@@ -224,7 +220,12 @@ export default class LoginScreen extends Component {
   }
 
   requestLogin() {
-    this.setModalVisible('status', true);
-    ToastAndroid.show('Opened modal.', ToastAndroid.SHORT);
+    if(this.state.username === 'a' && this.state.password === 'a') {
+      ToastAndroid.show('Login Successful.', ToastAndroid.SHORT);
+
+      this.props.navigation.navigate('Home');
+    } else {
+      ToastAndroid.show('Invalid username and/or password.', ToastAndroid.SHORT);
+    }
   }
 }
