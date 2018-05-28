@@ -84,7 +84,7 @@ export default class Sidebar extends Component {
                 }}
                 source={{
                   uri: this.state.image
-                }}/>
+                }} />
             </View>
             <Text
               style={{
@@ -107,7 +107,7 @@ export default class Sidebar extends Component {
               paddingVertical: 0
             }}
             itemStyle={{
-              borderBottomColor: '#eee',
+              borderBottomColor: 'rgba(0, 0, 0, .04)',
               borderBottomWidth: 1
             }}
             {...this.props} />

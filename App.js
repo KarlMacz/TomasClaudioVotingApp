@@ -3,7 +3,6 @@ import {
   /*
   * APIs
   */
-  AsyncStorage,
   ToastAndroid,
 
   /*
@@ -22,18 +21,11 @@ import {
   SafeAreaView
 } from 'react-navigation';
 
+import SplashScreen from './components/SplashScreen';
 import LoginScreen from './components/LoginScreen';
 import LogoutScreen from './components/LogoutScreen';
 import HomeScreen from './components/HomeScreen';
 import Sidebar from './components/partials/Sidebar';
-
-var auth = null;
-
-AsyncStorage.getItem('auth').then((result) => {
-  if(result !== null) {
-    auth = result;
-  }
-});
 
 const RootDrawer = createDrawerNavigator({
   Home: {
@@ -57,10 +49,13 @@ const RootStack = createStackNavigator({
 });
 
 const RootNavi = createSwitchNavigator({
+  Splash: {
+    screen: SplashScreen
+  },
   Stack: RootStack,
   Drawer: RootDrawer
 }, {
-  initialRouteName: (auth === null ? 'Stack' : 'Drawer')
+  initialRouteName: 'Splash'
 });
 
 export default class App extends Component {

@@ -4,6 +4,7 @@ import {
   * APIs
   */
   AsyncStorage,
+  Keyboard,
   NetInfo,
   ToastAndroid,
 
@@ -31,9 +32,7 @@ import {Colors} from './../styles/Colors';
 export default class LoginScreen extends Component {
   static navigationOptions = {
     title: 'Login',
-    header: null
-  };
-  static contentOptions = {
+    header: null,
     drawerLockMode: 'locked-closed'
   };
 
@@ -46,6 +45,7 @@ export default class LoginScreen extends Component {
       }
     });
 
+    this.inputRefs = {};
     this.state = {
       connectivityModalVisible: false,
       statusModalVisible: false,
@@ -95,8 +95,7 @@ export default class LoginScreen extends Component {
             style={customStyles.headerContent}>
             <Image
               style={customStyles.headerLogo}
-              source={require('./../assets/img/tcc_logo.png')}
-            />
+              source={require('./../assets/img/tcc_logo.png')} />
             <Text style={customStyles.headerTitleText}>Worthy Votes</Text>
           </View>
         </View>
@@ -104,23 +103,31 @@ export default class LoginScreen extends Component {
           style={customStyles.body}>
           <TextInput
             style={styles.inputControl}
+            ref={(input) => {
+              this.inputRefs.username = input;
+            }}
             placeholder="Username"
+            returnKeyType="next"
             onChangeText={(text) => {
               this.setState({
                 username: text
               });
             }}
-          />
+            onSubmitEditing={() => {
+              this.inputRefs.password.focus();
+            }} />
           <TextInput
             style={styles.inputControl}
+            ref={(input) => {
+              this.inputRefs.password = input;
+            }}
             placeholder="Password"
             secureTextEntry={true}
             onChangeText={(text) => {
               this.setState({
                 password: text
               });
-            }}
-          />
+            }} />
           <TouchableHighlight
             style={styles.buttonPrimary}
             onPress={() => {
@@ -157,29 +164,6 @@ export default class LoginScreen extends Component {
           <Text style={customStyles.footerText}>Copyright © 2018 Supreme Student Council of Leaders.</Text>
           <Text style={customStyles.footerText}>All Rights Reserved.</Text>
         </View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.statusModalVisible}
-          onRequestClose={() => {}}>
-          <View
-            style={styles.modal}>
-            <View
-              style={styles.modalContent}>
-              <Text>Username: {this.state.username} {typeof this.state.username}</Text>
-              <Text>Password: {this.state.password} {typeof this.state.password}</Text>
-              <TouchableHighlight
-                style={styles.buttonPrimary}
-                onPress={() => {
-                  this.setModalVisible('status', false);
-                  ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
-                }}
-                underlayColor={Colors.primaryColorActive}>
-                <Text style={styles.buttonContent}>CLOSE</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
         <GroupedModals
           showLoader={this.state.loaderModalVisible}
           showConnectivity={this.state.connectivityModalVisible}

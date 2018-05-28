@@ -93,7 +93,6 @@ export default class HomeScreen extends Component {
           }} />
         <ScrollView
           style={customStyles.body}>
-          <Text>{JSON.stringify(this.props)}</Text>
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
