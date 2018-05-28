@@ -3,6 +3,7 @@ import {
   /*
   * APIs
   */
+  AsyncStorage,
   ToastAndroid,
 
   /*
@@ -10,34 +11,29 @@ import {
   */
   ScrollView,
   Text,
-  TouchableHighlight
+  TouchableHighlight,
+  View
 } from 'react-native';
 import {
   createDrawerNavigator,
   createStackNavigator,
   createSwitchNavigator,
   DrawerItems,
-  SafeAreaView,
-  TouchableItem
+  SafeAreaView
 } from 'react-navigation';
 
 import LoginScreen from './components/LoginScreen';
 import LogoutScreen from './components/LogoutScreen';
 import HomeScreen from './components/HomeScreen';
+import Sidebar from './components/partials/Sidebar';
 
-const CustomDrawerContentComponent = (props) => {
-  return (
-    <ScrollView>
-      <SafeAreaView
-        forceInset={{ top: 'always', horizontal: 'never' }}>
-        <DrawerItems
-          activeTintColor="#4c9261"
-          {...props} />
+var auth = null;
 
-      </SafeAreaView>
-    </ScrollView>
-  );
-};
+AsyncStorage.getItem('auth').then((result) => {
+  if(result !== null) {
+    auth = result;
+  }
+});
 
 const RootDrawer = createDrawerNavigator({
   Home: {
@@ -49,7 +45,7 @@ const RootDrawer = createDrawerNavigator({
 }, {
   initialRouteName: 'Home',
   drawerPosition: 'left',
-  contentComponent: CustomDrawerContentComponent
+  contentComponent: Sidebar
 });
 
 const RootStack = createStackNavigator({
@@ -64,7 +60,7 @@ const RootNavi = createSwitchNavigator({
   Stack: RootStack,
   Drawer: RootDrawer
 }, {
-  initialRouteName: 'Stack'
+  initialRouteName: (auth === null ? 'Stack' : 'Drawer')
 });
 
 export default class App extends Component {

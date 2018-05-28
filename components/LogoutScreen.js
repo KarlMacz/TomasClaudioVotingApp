@@ -3,6 +3,7 @@ import {
   /*
   * APIs
   */
+  AsyncStorage,
   ToastAndroid,
 
   /*
@@ -19,17 +20,16 @@ import styles from './../styles/Styles';
 export default class Logout extends Component {
   static navigationOptions = {
     title: 'Logout',
-    header: null
-  };
-  static contentOptions = {
+    header: null,
     drawerLockMode: 'locked-closed'
   };
 
   constructor(props) {
     super(props);
 
+    AsyncStorage.removeItem('auth');
+
     StatusBar.setHidden(true);
-    ToastAndroid.show('Logout.', ToastAndroid.LONG);
   }
 
   render() {

@@ -8,5 +8,6 @@ export const Colors = {
   primaryColor: '#4c9261',
   primaryColorActive: '#387e4d',
   warningColor: '#eacf6c',
-  warningColorActive: '#d6bb58'
+  warningColorActive: '#d6bb58',
+  white: 'white'
 };

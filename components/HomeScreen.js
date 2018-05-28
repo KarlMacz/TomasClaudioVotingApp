@@ -3,6 +3,7 @@ import {
   /*
   * APIs
   */
+  AsyncStorage,
   NetInfo,
   ToastAndroid,
 
@@ -36,6 +37,12 @@ export default class HomeScreen extends Component {
 
   constructor(props) {
     super(props);
+
+    AsyncStorage.getItem('auth').then((result) => {
+      if(result === null) {
+        this.props.navigation.navigate('Login');
+      }
+    });
 
     this.state = {
       connectivityModalVisible: false,

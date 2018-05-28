@@ -3,6 +3,7 @@ import {
   /*
   * APIs
   */
+  AsyncStorage,
   NetInfo,
   ToastAndroid,
 
@@ -39,6 +40,12 @@ export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
 
+    AsyncStorage.getItem('auth').then((result) => {
+      if(result !== null) {
+        this.props.navigation.navigate('Home');
+      }
+    });
+
     this.state = {
       connectivityModalVisible: false,
       statusModalVisible: false,
@@ -49,8 +56,6 @@ export default class LoginScreen extends Component {
     };
 
     StatusBar.setHidden(true);
-    // StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
-    // StatusBar.setTranslucent(true);
   }
 
   componentDidMount() {
@@ -220,12 +225,44 @@ export default class LoginScreen extends Component {
   }
 
   requestLogin() {
-    if(this.state.username === 'a' && this.state.password === 'a') {
-      ToastAndroid.show('Login Successful.', ToastAndroid.SHORT);
+    this.setState({
+      loaderModalVisible: true
+    });
 
-      this.props.navigation.navigate('Home');
-    } else {
-      ToastAndroid.show('Invalid username and/or password.', ToastAndroid.SHORT);
-    }
+    fetch('http://192.168.1.8/TomasClaudioVotingServer/index.php', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      console.log(response.data);
+
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('auth', JSON.stringify(response.data));
+
+        ToastAndroid.show('Login Successful.', ToastAndroid.SHORT);
+
+        this.props.navigation.navigate('Home');
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      console.log(err);
+
+      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
+    });
   }
 }
