@@ -19,8 +19,16 @@ export default class Navbar extends Component {
       <View
         style={{
           backgroundColor: "#4c9261",
+          elevation: 4,
           flexDirection: 'row',
           justifyContent: 'center',
+          shadowColor: '#222222',
+          shadowOffset: {
+            height: 2,
+            width: 0
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 2,
           padding: 10,
           height: 60,
           width: '100%'
