@@ -78,7 +78,9 @@ export default class Sidebar extends Component {
               }}>
               <Image
                 style={{
+                  borderColor: '#5abf79',
                   borderRadius: 100,
+                  borderWidth: 4,
                   height: 100,
                   width: 100
                 }}
@@ -89,7 +91,7 @@ export default class Sidebar extends Component {
             <Text
               style={{
                 color: 'white',
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: 'bold',
                 textAlign: 'center'
               }}>{this.state.full_name}</Text>
