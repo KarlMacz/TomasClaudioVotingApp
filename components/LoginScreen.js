@@ -23,6 +23,7 @@ import {
 } from 'react-native';
 
 import GroupedModals from './partials/GroupedModals';
+import Button from './partials/Button';
 
 import styles from './../styles/Styles';
 import customStyles from './../styles/LoginStyles';
@@ -39,12 +40,6 @@ export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
 
-    AsyncStorage.getItem('auth').then((result) => {
-      if(result !== null) {
-        this.props.navigation.navigate('Home');
-      }
-    });
-
     this.inputRefs = {};
     this.state = {
       connectivityModalVisible: false,
@@ -54,6 +49,12 @@ export default class LoginScreen extends Component {
       username: '',
       password: ''
     };
+
+    AsyncStorage.getItem('auth').then((result) => {
+      if(result !== null) {
+        this.props.navigation.navigate('Home');
+      }
+    });
 
     StatusBar.setHidden(true);
   }
@@ -128,35 +129,17 @@ export default class LoginScreen extends Component {
                 password: text
               });
             }} />
-          <TouchableHighlight
-            style={styles.buttonPrimary}
+          <Button
+            title="LOG IN"
+            type="primary"
             onPress={() => {
               this.requestLogin();
-            }}
-            underlayColor={Colors.primaryColorActive}>
-            <Text style={styles.buttonContent}>LOG IN</Text>
-          </TouchableHighlight>
+            }} />
           <View
             style={customStyles.buttonLinkBlock}>
-            <TouchableOpacity
-              style={customStyles.buttonLink}
-              accessibilityTraits="link"
-              onPress={() => {
-                this.setState({
-                  connectivityModalVisible: true
-                });
-
-                setTimeout(() => {
-                  this.setState({
-                    connectivityModalVisible: false
-                  });
-                }, 2000);
-              }}>
-              <Text
-                style={{
-                  color: Colors.primaryColor
-                }}>Forgot Password?</Text>
-            </TouchableOpacity>
+            <Button
+              title="Forgot Password?"
+              type="link" />
           </View>
         </View>
         <View

@@ -23,11 +23,13 @@ export default class Sidebar extends Component {
     super(props);
 
     this.state = {
-      username: null,
-      first_name: null,
-      middle_name: null,
-      last_name: null,
-      email: null
+      username: '',
+      first_name: '',
+      middle_name: '',
+      last_name: '',
+      full_name: '',
+      image: '',
+      email: ''
     };
 
     AsyncStorage.getItem('auth').then((result) => {

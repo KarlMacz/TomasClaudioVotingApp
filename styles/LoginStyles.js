@@ -27,7 +27,7 @@ export default StyleSheet.create({
     fontFamily: 'Satisfy',
     fontSize: 50,
     textAlign: 'center',
-    textShadowColor: '#222222',
+    textShadowColor: '#222',
     textShadowOffset: {
       height: 2,
       width: 0
@@ -40,7 +40,7 @@ export default StyleSheet.create({
   },
   footer: {
     backgroundColor: '#f5f5f5',
-    borderTopColor: '#dddddd',
+    borderTopColor: '#ddd',
     borderTopWidth: 1,
     justifyContent: 'center',
     padding: 15
@@ -51,9 +51,6 @@ export default StyleSheet.create({
   },
   buttonLinkBlock: {
     alignItems: 'center',
-    marginTop: 10
-  },
-  buttonLink: {
-    padding: 5
+    marginTop: 15
   }
 });

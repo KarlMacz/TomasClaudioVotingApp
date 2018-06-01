@@ -46,7 +46,7 @@ export default class Logout extends Component {
          height: '100%',
          width: '100%',
        }}>
-        <ActivityIndicator size="large" color="#ffffff" />
+        <ActivityIndicator size="large" color="#fff" />
         <Text
           style={{
             color: 'white',

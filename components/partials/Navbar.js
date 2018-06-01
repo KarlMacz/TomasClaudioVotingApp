@@ -10,6 +10,8 @@ import {
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import Button from './Button';
+
 import {Colors} from './../../styles/Colors';
 import styles from './../../styles/Styles';
 
@@ -55,25 +57,17 @@ export default class Navbar extends Component {
             height: '100%',
             width: '50%'
           }}>
-          <TouchableHighlight
-            style={{
-              alignItems: 'center',
-              backgroundColor: Colors.primaryColor,
-              borderRadius: 4,
-              justifyContent: 'center',
-              paddingLeft: 15,
-              paddingRight: 15,
-              height: '100%'
-            }}
-            onPress={this.props.onMenuPress}
-            underlayColor={Colors.primaryColorActive}>
-            <FontAwesome
-              style={{
-                color: 'white',
-                fontSize: 20
-              }}
-              name="bars" />
-          </TouchableHighlight>
+          <Button
+            title={(
+              <FontAwesome
+                style={{
+                  color: 'white',
+                  fontSize: 20
+                }}
+                name="bars" />
+            )}
+            type="primary"
+            onPress={this.props.onMenuPress} />
         </View>
       </View>
     );

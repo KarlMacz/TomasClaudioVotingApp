@@ -24,8 +24,12 @@ import {
   View
 } from 'react-native';
 
+import moment from 'moment';
+import 'moment-duration-format';
+
 import Navbar from './partials/Navbar';
 import GroupedModals from './partials/GroupedModals';
+import Cardboard from './partials/Cardboard';
 
 import styles from './../styles/Styles';
 import customStyles from './../styles/HomeStyles';
@@ -34,28 +38,53 @@ export default class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Home'
   };
+  static rvtInterval = null;
 
   constructor(props) {
     super(props);
-
-    AsyncStorage.getItem('auth').then((result) => {
-      if(result === null) {
-        this.props.navigation.navigate('Login');
-      }
-    });
 
     this.state = {
       connectivityModalVisible: false,
       statusModalVisible: false,
       loaderModalVisible: false,
-      networkConnection: false
+      networkConnection: false,
+      remainingVotingTime: '00:00:00',
+      auth: null
     };
+
+    AsyncStorage.getItem('auth').then((result) => {
+      if(result === null) {
+        this.props.navigation.navigate('Login');
+      } else {
+        this.setState({
+          auth: JSON.parse(result)
+        });
+      }
+    });
 
     StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
     StatusBar.setTranslucent(true);
   }
 
   componentDidMount() {
+    rvtInterval = setInterval(() => {
+      this.setState({
+        remainingVotingTime: moment.duration(moment('2018-06-01 18:00:00').diff(moment())).format('HH:mm:ss', {
+          trim: false
+        })
+      });
+
+      if(this.state.remainingVotingTime.indexOf('-') === 0) {
+        this.setState({
+          remainingVotingTime: '00:00:00'
+        });
+      }
+
+      if(this.state.remainingVotingTime === '00:00:00') {
+        clearInterval(rvtInterval);
+      }
+    }, 1000);
+
     NetInfo.isConnected.fetch().then((isConnected) => {
       this.setState({
         networkConnection: isConnected,
@@ -93,6 +122,47 @@ export default class HomeScreen extends Component {
           }} />
         <ScrollView
           style={customStyles.body}>
+          <Cardboard
+            additionalStyle={{
+              marginBottom: 10
+            }}>
+            {this.state.remainingVotingTime === '00:00:00' ? (
+              <View>
+                <Text
+                  style={{
+                    textAlign: 'center'
+                  }}>VOTING IS NOW OVER.</Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  marginTop: 5
+                }}>
+                <Text
+                  style={{
+                    textAlign: 'center'
+                  }}>VOTING ENDS IN:</Text>
+                <Text
+                  style={{
+                    fontSize: 50,
+                    textAlign: 'center'
+                  }}>{this.state.remainingVotingTime}</Text>
+              </View>
+            )}
+          </Cardboard>
+          {this.state.remainingVotingTime !== '00:00:00' ? null : (
+            <Cardboard
+              additionalStyle={{
+                marginBottom: 10
+              }}>
+              <View>
+                <Text
+                  style={{
+                    textAlign: 'center'
+                  }}></Text>
+              </View>
+            </Cardboard>
+          )}
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
           <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>

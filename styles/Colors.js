@@ -9,5 +9,9 @@ export const Colors = {
   primaryColorActive: '#387e4d',
   warningColor: '#eacf6c',
   warningColorActive: '#d6bb58',
+  black: 'black',
+  dark: '#222',
+  light: '#ddd',
+  lighter: '#eee',
   white: 'white'
 };

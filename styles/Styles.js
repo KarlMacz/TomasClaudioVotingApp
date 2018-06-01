@@ -17,15 +17,37 @@ export default StyleSheet.create({
     paddingLeft: 25,
     paddingRight: 25
   },
+  buttonDefault: {
+    alignItems: 'center',
+    backgroundColor: Colors.lighter,
+    borderRadius: 4,
+    justifyContent: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    height: 40
+  },
   buttonPrimary: {
     alignItems: 'center',
     backgroundColor: Colors.primaryColor,
     borderRadius: 4,
-    padding: 15
+    justifyContent: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    height: 40
+  },
+  buttonLink: {
+    padding: 2
   },
   buttonContent: {
     color: 'white',
     fontWeight: 'bold'
+  },
+  buttonContentDark: {
+    color: Colors.dark,
+    fontWeight: 'bold'
+  },
+  buttonContentLink: {
+    color: Colors.primaryColor
   },
   inputControl: {
     marginBottom: 5,
