@@ -23,13 +23,13 @@ export default class Sidebar extends Component {
     super(props);
 
     this.state = {
-      username: '',
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      full_name: '',
-      image: '',
-      email: ''
+      username: null,
+      first_name: null,
+      middle_name: null,
+      last_name: null,
+      full_name: null,
+      image: null,
+      email: null
     };
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -73,23 +73,25 @@ export default class Sidebar extends Component {
               paddingLeft: 10,
               paddingRight: 10
             }}>
-            <View
-              style={{
-                alignItems: 'center',
-                marginBottom: 10
-              }}>
-              <Image
+            {this.state.image === null ? null : (
+              <View
                 style={{
-                  borderColor: '#5abf79',
-                  borderRadius: 100,
-                  borderWidth: 4,
-                  height: 100,
-                  width: 100
-                }}
-                source={{
-                  uri: this.state.image
-                }} />
-            </View>
+                  alignItems: 'center',
+                  marginBottom: 10
+                }}>
+                <Image
+                  style={{
+                    borderColor: '#5abf79',
+                    borderRadius: 100,
+                    borderWidth: 4,
+                    height: 100,
+                    width: 100
+                  }}
+                  source={{
+                    uri: this.state.image
+                  }} />
+              </View>
+            )}
             <Text
               style={{
                 color: 'white',

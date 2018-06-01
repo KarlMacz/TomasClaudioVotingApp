@@ -48,17 +48,12 @@ export default class HomeScreen extends Component {
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
-      remainingVotingTime: '00:00:00',
-      auth: null
+      remainingVotingTime: '00:00:00'
     };
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
-      } else {
-        this.setState({
-          auth: JSON.parse(result)
-        });
       }
     });
 
@@ -69,7 +64,7 @@ export default class HomeScreen extends Component {
   componentDidMount() {
     rvtInterval = setInterval(() => {
       this.setState({
-        remainingVotingTime: moment.duration(moment('2018-06-01 18:00:00').diff(moment())).format('HH:mm:ss', {
+        remainingVotingTime: moment.duration(moment('2018-06-01 19:00:00').diff(moment())).format('HH:mm:ss', {
           trim: false
         })
       });

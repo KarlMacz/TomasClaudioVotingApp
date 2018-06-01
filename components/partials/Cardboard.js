@@ -14,9 +14,9 @@ import styles from './../../styles/Styles';
 
 export default class Cardboard extends Component {
   static defaultProps = {
-    imageSources: '',
-    title: '',
-    subtitle: '',
+    imageSources: null,
+    title: null,
+    subtitle: null,
     additionalStyle: {}
   };
 
@@ -45,7 +45,7 @@ export default class Cardboard extends Component {
             padding: 10,
             width: '100%'
           }}>
-          {this.props.imageSources === '' ? null : (
+          {this.props.imageSources === null ? null : (
             <View>
               <Image
                 style={{
@@ -60,7 +60,7 @@ export default class Cardboard extends Component {
                 source={this.props.imageSource} />
             </View>
           )}
-          {this.props.title === '' ? null : (
+          {this.props.title === null ? null : (
             <View>
               <Text
                 style={{
@@ -71,7 +71,7 @@ export default class Cardboard extends Component {
                 }}>{this.props.title}</Text>
             </View>
           )}
-          {this.props.subtitle === '' ? null : (
+          {this.props.subtitle === null ? null : (
             <View>
               <Text
                 style={{
