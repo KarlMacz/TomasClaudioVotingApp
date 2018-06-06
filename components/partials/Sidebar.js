@@ -45,13 +45,9 @@ export default class Sidebar extends Component {
         }
 
         this.setState({
-          username: result.username,
-          first_name: result.first_name,
-          middle_name: result.middle_name,
-          last_name: result.last_name,
           full_name: full_name,
           image: result.image,
-          email: result.email
+          type: result.type
         });
       }
     });
@@ -104,7 +100,7 @@ export default class Sidebar extends Component {
                 color: 'white',
                 fontSize: 13,
                 textAlign: 'center'
-              }}>Student</Text>
+              }}>{this.state.type}</Text>
           </View>
           <DrawerItems
             activeTintColor="#ffffff"
