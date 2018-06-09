@@ -6,21 +6,21 @@ export default StyleSheet.create({
   header: {
     backgroundColor: Colors.primaryColor,
     borderRadius: 450,
-    marginTop: -621,
+    marginTop: -591,
     marginLeft: -270,
     height: 900,
     width: 900
   },
   headerContent: {
-    marginTop: 675,
+    marginTop: 625,
     marginLeft: 300,
     width: 300
   },
   headerLogo: {
     left: '50%',
-    marginLeft: -50,
-    height: 100,
-    width: 100
+    marginLeft: -75,
+    height: 150,
+    width: 150
   },
   headerTitleText: {
     color: 'white',
@@ -37,7 +37,13 @@ export default StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: 30,
-    paddingVertical: 50
+    paddingVertical: 30
+  },
+  bodyTitle: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 'auto'
   },
   footer: {
     backgroundColor: '#f5f5f5',
@@ -51,7 +57,6 @@ export default StyleSheet.create({
     textAlign: 'center'
   },
   buttonLinkBlock: {
-    alignItems: 'center',
-    marginTop: 15
+    marginTop: 10
   }
 });
