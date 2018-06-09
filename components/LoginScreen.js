@@ -103,30 +103,14 @@ export default class LoginScreen extends Component {
         <View
           style={customStyles.body}>
           <TextInput
-            style={styles.inputControl}
+            style={styles.inputControlLg}
             ref={(input) => {
               this.inputRefs.username = input;
             }}
-            placeholder="Username"
-            returnKeyType="next"
+            placeholder="Username or Student ID Number"
             onChangeText={(text) => {
               this.setState({
                 username: text
-              });
-            }}
-            onSubmitEditing={() => {
-              this.inputRefs.password.focus();
-            }} />
-          <TextInput
-            style={styles.inputControl}
-            ref={(input) => {
-              this.inputRefs.password = input;
-            }}
-            placeholder="Password"
-            secureTextEntry={true}
-            onChangeText={(text) => {
-              this.setState({
-                password: text
               });
             }} />
           <Button
@@ -135,12 +119,6 @@ export default class LoginScreen extends Component {
             onPress={() => {
               this.requestLogin();
             }} />
-          <View
-            style={customStyles.buttonLinkBlock}>
-            <Button
-              title="Forgot Password?"
-              type="link" />
-          </View>
         </View>
         <View
           style={customStyles.footer}>
@@ -203,8 +181,7 @@ export default class LoginScreen extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password
+        username: this.state.username
       })
     }).then((resp) => resp.json()).then((response) => {
       this.setState({
