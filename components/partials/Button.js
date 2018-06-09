@@ -12,7 +12,7 @@ import {
 import {Colors} from './../../styles/Colors';
 import styles from './../../styles/Styles';
 
-export default class Cardboard extends Component {
+export default class Button extends Component {
   static defaultProps = {
     title: '',
     type: 'default',
