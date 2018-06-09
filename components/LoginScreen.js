@@ -113,12 +113,17 @@ export default class LoginScreen extends Component {
                 username: text
               });
             }} />
-          <Button
-            title="LOG IN"
-            type="primary"
-            onPress={() => {
-              this.requestLogin();
-            }} />
+          <View
+            style={customStyles.buttonLinkBlock}>
+            <Button
+              title="LOGIN"
+              type="primary"
+              onPress={() => {
+                this.requestLogin();
+              }} />
+          </View>
+          <Text
+            style={customStyles.bodyTitle}>Sign In</Text>
         </View>
         <View
           style={customStyles.footer}>
