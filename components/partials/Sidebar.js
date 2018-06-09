@@ -23,13 +23,9 @@ export default class Sidebar extends Component {
     super(props);
 
     this.state = {
-      username: null,
-      first_name: null,
-      middle_name: null,
-      last_name: null,
       full_name: null,
       image: null,
-      email: null
+      type: null
     };
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -38,7 +34,7 @@ export default class Sidebar extends Component {
 
         let full_name = '';
 
-        if(result.middle_name === null && result.middle_name === '') {
+        if(result.middle_name === null || result.middle_name === '') {
           full_name = result.first_name + ' ' + result.last_name;
         } else {
           full_name = result.first_name + ' ' + result.middle_name.substring(0, 1) + '. ' + result.last_name;

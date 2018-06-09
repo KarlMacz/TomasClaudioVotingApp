@@ -179,7 +179,7 @@ export default class LoginScreen extends Component {
       loaderModalVisible: true
     });
 
-    fetch('http://192.168.1.8/TomasClaudioVotingServer/index.php', {
+    fetch('http://192.168.1.8:8000/api/json/auth', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
