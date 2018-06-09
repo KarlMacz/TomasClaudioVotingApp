@@ -50,8 +50,15 @@ export default StyleSheet.create({
     color: Colors.primaryColor
   },
   inputControl: {
+    fontSize: 13,
     marginBottom: 5,
     height: 50,
+    width: '100%'
+  },
+  inputControlLg: {
+    fontSize: 18,
+    marginBottom: 5,
+    height: 70,
     width: '100%'
   },
   modal: {

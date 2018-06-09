@@ -36,7 +36,8 @@ export default StyleSheet.create({
   },
   body: {
     flex: 1,
-    padding: 30
+    paddingHorizontal: 30,
+    paddingVertical: 50
   },
   footer: {
     backgroundColor: '#f5f5f5',
