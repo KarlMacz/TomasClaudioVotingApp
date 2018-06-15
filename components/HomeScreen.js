@@ -68,25 +68,13 @@ export default class HomeScreen extends Component {
         username: this.state.username
       })
     }).then((resp) => resp.json()).then((response) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       if(response.status === 'ok') {
-        AsyncStorage.setItem('auth', JSON.stringify(response.data));
-
-        ToastAndroid.show('Login Successful.', ToastAndroid.SHORT);
-
-        this.props.navigation.navigate('Home');
+        // Do something...
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
-      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
+      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
     });
 
     StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
