@@ -22,6 +22,8 @@ import {
   View
 } from 'react-native';
 
+import {Config} from './../Config';
+
 import GroupedModals from './partials/GroupedModals';
 import Button from './partials/Button';
 
@@ -61,18 +63,7 @@ export default class LoginScreen extends Component {
 
   componentDidMount() {
     NetInfo.isConnected.fetch().then((isConnected) => {
-      this.setState({
-        networkConnection: isConnected,
-        connectivityModalVisible: !isConnected
-      });
-
-      if(!isConnected) {
-        setTimeout(() => {
-          this.setState({
-            connectivityModalVisible: false
-          });
-        }, 5000);
-      }
+      this.handleConnectivityChange(isConnected);
     });
 
     NetInfo.isConnected.addEventListener('connectionChange', (isConnected) => {
@@ -148,7 +139,7 @@ export default class LoginScreen extends Component {
       this.setState({
         connectivityModalVisible: false
       });
-    }, 5000);
+    }, 1000);
   }
 
   setModalVisible(modalName, isVisible) {
@@ -179,21 +170,20 @@ export default class LoginScreen extends Component {
       loaderModalVisible: true
     });
 
-    fetch('http://192.168.1.8:8000/api/json/auth', {
+    fetch('http://192.168.1.10:8000/api/json/auth', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        app_key: Config.app_key,
         username: this.state.username
       })
     }).then((resp) => resp.json()).then((response) => {
       this.setState({
         loaderModalVisible: false
       });
-
-      console.log(response.data);
 
       if(response.status === 'ok') {
         AsyncStorage.setItem('auth', JSON.stringify(response.data));
@@ -208,8 +198,6 @@ export default class LoginScreen extends Component {
       this.setState({
         loaderModalVisible: false
       });
-
-      console.log(err);
 
       ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
     });

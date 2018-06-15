@@ -57,6 +57,38 @@ export default class HomeScreen extends Component {
       }
     });
 
+    fetch('http://192.168.1.10:8000/api/json/auth', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key,
+        username: this.state.username
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('auth', JSON.stringify(response.data));
+
+        ToastAndroid.show('Login Successful.', ToastAndroid.SHORT);
+
+        this.props.navigation.navigate('Home');
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
+    });
+
     StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
     StatusBar.setTranslucent(true);
   }
