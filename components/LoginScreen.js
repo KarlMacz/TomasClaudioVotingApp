@@ -170,7 +170,7 @@ export default class LoginScreen extends Component {
       loaderModalVisible: true
     });
 
-    fetch('http://192.168.1.10:8000/api/json/auth', {
+    fetch(Config.server_url + '/api/json/auth', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -199,6 +199,7 @@ export default class LoginScreen extends Component {
         loaderModalVisible: false
       });
 
+      console.log(err);
       ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
     });
   }

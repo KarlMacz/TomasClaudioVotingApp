@@ -25,6 +25,7 @@ export default class Sidebar extends Component {
     this.state = {
       full_name: null,
       image: null,
+      gender: null,
       type: null
     };
 
@@ -43,6 +44,7 @@ export default class Sidebar extends Component {
         this.setState({
           full_name: full_name,
           image: result.image,
+          gender: result.gender,
           type: result.type
         });
       }
@@ -65,7 +67,23 @@ export default class Sidebar extends Component {
               paddingLeft: 10,
               paddingRight: 10
             }}>
-            {this.state.image === null ? null : (
+            {this.state.image === null ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginBottom: 10
+                }}>
+                <Image
+                  style={{
+                    borderColor: '#5abf79',
+                    borderRadius: 100,
+                    borderWidth: 4,
+                    height: 100,
+                    width: 100
+                  }}
+                  source={this.state.gender === 'Female' ? (require('./../../assets/img/female.png')) : (require('./../../assets/img/male.png'))} />
+              </View>
+            ) : (
               <View
                 style={{
                   alignItems: 'center',

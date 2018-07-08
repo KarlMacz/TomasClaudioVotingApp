@@ -27,6 +27,8 @@ import {
 import moment from 'moment';
 import 'moment-duration-format';
 
+import {Config} from './../Config';
+
 import Navbar from './partials/Navbar';
 import GroupedModals from './partials/GroupedModals';
 import Cardboard from './partials/Cardboard';
@@ -38,17 +40,18 @@ export default class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Home'
   };
-  static rvtInterval = null;
 
   constructor(props) {
     super(props);
+
+    this.rvtInterval = null;
 
     this.state = {
       connectivityModalVisible: false,
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
-      remainingVotingTime: '00:00:00'
+      remainingVotingTime: null
     };
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -57,49 +60,37 @@ export default class HomeScreen extends Component {
       }
     });
 
-    fetch('http://192.168.1.10:8000/api/json/auth', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        app_key: Config.app_key,
-        username: this.state.username
-      })
-    }).then((resp) => resp.json()).then((response) => {
-      if(response.status === 'ok') {
-        // Do something...
-      } else {
-        ToastAndroid.show(response.message, ToastAndroid.SHORT);
-      }
-    }).catch((err) => {
-      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
-    });
+    this.requestSettings();
+
+    setInterval(() => {
+      this.requestSettings();
+    }, 15000);
+
+    if(this.rvtInterval === null) {
+      this.rvtInterval = setInterval(() => {
+        this.setState({
+          remainingVotingTime: moment.duration(moment(this.electionUntil).diff(moment())).format('HH:mm:ss', {
+            trim: false
+          })
+        });
+
+        if(this.state.remainingVotingTime.indexOf('-') === 0) {
+          this.setState({
+            remainingVotingTime: '00:00:00'
+          });
+        }
+
+        if(this.state.remainingVotingTime === '00:00:00') {
+          // clearInterval(this.rvtInterval);
+        }
+      }, 1000);
+    }
 
     StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
     StatusBar.setTranslucent(true);
   }
 
   componentDidMount() {
-    rvtInterval = setInterval(() => {
-      this.setState({
-        remainingVotingTime: moment.duration(moment('2018-06-01 19:00:00').diff(moment())).format('HH:mm:ss', {
-          trim: false
-        })
-      });
-
-      if(this.state.remainingVotingTime.indexOf('-') === 0) {
-        this.setState({
-          remainingVotingTime: '00:00:00'
-        });
-      }
-
-      if(this.state.remainingVotingTime === '00:00:00') {
-        clearInterval(rvtInterval);
-      }
-    }, 1000);
-
     NetInfo.isConnected.fetch().then((isConnected) => {
       this.setState({
         networkConnection: isConnected,
@@ -124,6 +115,8 @@ export default class HomeScreen extends Component {
     NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
       this.handleConnectivityChange(isConnected);
     });
+
+    clearInterval(this.rvtInterval);
   }
 
   render() {
@@ -141,31 +134,38 @@ export default class HomeScreen extends Component {
             additionalStyle={{
               marginBottom: 10
             }}>
-            {this.state.remainingVotingTime === '00:00:00' ? (
-              <View>
-                <Text
+            {this.state.remainingVotingTime === null ? (
+                <View>
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : (
+              this.state.remainingVotingTime === '00:00:00' ? (
+                <View>
+                  <Text
+                    style={{
+                      textAlign: 'center'
+                    }}>VOTING IS NOW OVER.</Text>
+                </View>
+              ) : (
+                <View
                   style={{
-                    textAlign: 'center'
-                  }}>VOTING IS NOW OVER.</Text>
-              </View>
-            ) : (
-              <View
-                style={{
-                  marginTop: 5
-                }}>
-                <Text
-                  style={{
-                    textAlign: 'center'
-                  }}>VOTING ENDS IN:</Text>
-                <Text
-                  style={{
-                    fontSize: 50,
-                    textAlign: 'center'
-                  }}>{this.state.remainingVotingTime}</Text>
-              </View>
+                    marginTop: 5
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      textAlign: 'center'
+                    }}>ELECTION ENDS IN:</Text>
+                  <Text
+                    style={{
+                      fontSize: 50,
+                      textAlign: 'center'
+                    }}>{this.state.remainingVotingTime}</Text>
+                </View>
+              )
             )}
           </Cardboard>
-          {this.state.remainingVotingTime !== '00:00:00' ? null : (
+          {this.state.remainingVotingTime === '00:00:00' || this.state.remainingVotingTime === null ? null : (
             <Cardboard
               additionalStyle={{
                 marginBottom: 10
@@ -253,5 +253,32 @@ export default class HomeScreen extends Component {
 
         break;
     }
+  }
+
+  requestSettings() {
+    fetch(Config.server_url + '/api/json/data/settings', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        var settings = response.data;
+
+        for(var index in settings) {
+          if(settings[index].name === 'election_until') {
+            this.electionUntil = settings[index].value;
+          }
+        }
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+    });
   }
 }
