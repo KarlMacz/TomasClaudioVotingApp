@@ -48,8 +48,7 @@ export default class LoginScreen extends Component {
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
-      username: '',
-      password: ''
+      username: ''
     };
 
     AsyncStorage.getItem('auth').then((result) => {

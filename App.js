@@ -25,11 +25,15 @@ import SplashScreen from './components/SplashScreen';
 import LoginScreen from './components/LoginScreen';
 import LogoutScreen from './components/LogoutScreen';
 import HomeScreen from './components/HomeScreen';
+import VotingScreen from './components/VotingScreen';
 import Sidebar from './components/partials/Sidebar';
 
 const RootDrawer = createDrawerNavigator({
   Home: {
     screen: HomeScreen
+  },
+  Voting: {
+    screen: VotingScreen
   },
   Logout: {
     screen: LogoutScreen

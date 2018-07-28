@@ -21,6 +21,7 @@ import {
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View
 } from 'react-native';
 
@@ -51,12 +52,18 @@ export default class HomeScreen extends Component {
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
+      hasVoted: true,
+      isElectionStarted: null,
       remainingVotingTime: null
     };
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
+      } else {
+        this.setState({
+          hasVoted: result.has_voted
+        });
       }
     });
 
@@ -64,7 +71,7 @@ export default class HomeScreen extends Component {
 
     setInterval(() => {
       this.requestSettings();
-    }, 15000);
+    }, 5000);
 
     if(this.rvtInterval === null) {
       this.rvtInterval = setInterval(() => {
@@ -165,28 +172,29 @@ export default class HomeScreen extends Component {
               )
             )}
           </Cardboard>
-          {this.state.remainingVotingTime === '00:00:00' || this.state.remainingVotingTime === null ? null : (
-            <Cardboard
-              additionalStyle={{
-                marginBottom: 10
+          {!this.state.hasVoted &&this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate('Voting');
               }}>
-              <View>
-                <Text
-                  style={{
-                    textAlign: 'center'
-                  }}></Text>
-              </View>
-            </Cardboard>
-          )}
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem aliquam voluptas consequuntur obcaecati cum nobis nihil corporis quidem voluptatem, in nostrum eveniet fuga a maiores reprehenderit maxime. Inventore dolorum, maxime!</Text>
+              <Cardboard
+                additionalStyle={{
+                  marginBottom: 10
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 30,
+                      textAlign: 'center'
+                    }}>Vote Now</Text>
+                  <Text
+                    style={{
+                      textAlign: 'center'
+                    }}>Tap here to start voting.</Text>
+                </View>
+              </Cardboard>
+            </TouchableOpacity>
+          ) : null}
         </ScrollView>
         <Modal
           animationType="fade"
@@ -272,6 +280,10 @@ export default class HomeScreen extends Component {
         for(var index in settings) {
           if(settings[index].name === 'election_until') {
             this.electionUntil = settings[index].value;
+          } else if(settings[index].name === 'is_election_started') {
+            this.setState({
+              isElectionStarted: settings[index].value
+            });
           }
         }
       } else {
