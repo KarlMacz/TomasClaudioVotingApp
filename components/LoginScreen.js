@@ -112,8 +112,6 @@ export default class LoginScreen extends Component {
                 this.requestLogin();
               }} />
           </View>
-          <Text
-            style={customStyles.bodyTitle}>Sign In</Text>
         </View>
         <View
           style={customStyles.footer}>
