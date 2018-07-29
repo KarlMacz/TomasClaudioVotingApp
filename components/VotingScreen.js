@@ -58,10 +58,10 @@ export default class VotingScreen extends Component {
       networkConnection: false
     };
 
-    this.requestSubmitVotes();
+    this.requestData();
 
     setTimeout(() => {
-      this.requestSubmitVotes();
+      this.requestData();
     }, 2000);
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -208,14 +208,14 @@ export default class VotingScreen extends Component {
                   </View>
                 );
               })}
-              <Button
-                title="Submit Votes"
-                type="primary"
-                onPress={() => {
-                  this.requestSubmit();
-                }} />
             </View>
           )}</View>
+          <Button
+            title="Submit Votes"
+            type="primary"
+            onPress={() => {
+              this.requestSubmitVotes();
+            }} />
         </ScrollView>
         <Modal
           animationType="fade"
@@ -284,7 +284,7 @@ export default class VotingScreen extends Component {
     }
   }
 
-  requestSubmitVotes() {
+  requestData() {
     var candidatesSelected = [];
 
     for(var key in this.selectedCandidates) {
@@ -312,9 +312,7 @@ export default class VotingScreen extends Component {
       });
 
       if(response.status === 'ok') {
-        ToastAndroid.show(response.message, ToastAndroid.LONG);
-
-        this.props.navigation.navigate('Home');
+        AsyncStorage.setItem('electionPositions', JSON.stringify(response.data));
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
@@ -346,7 +344,7 @@ export default class VotingScreen extends Component {
     });
   }
 
-  requestSubmit() {
+  requestSubmitVotes() {
     this.setState({
       loaderModalVisible: true
     });
@@ -377,6 +375,7 @@ export default class VotingScreen extends Component {
       });
 
       console.log(err);
+      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
     });
   }
 }
