@@ -12,7 +12,6 @@ import {
   */
   ActivityIndicator,
   ToolbarAndroid,
-  Button,
   Image,
   Modal,
   StatusBar,
@@ -33,7 +32,9 @@ import {Config} from './../Config';
 import Navbar from './partials/Navbar';
 import GroupedModals from './partials/GroupedModals';
 import Cardboard from './partials/Cardboard';
+import Button from './partials/Button';
 
+import {Colors} from './../styles/Colors';
 import styles from './../styles/Styles';
 import customStyles from './../styles/HomeStyles';
 
@@ -45,8 +46,10 @@ export default class VotingScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.positions = null;
-    this.candidates = null;
+    this.auth = [];
+    this.positions = [];
+    this.candidates = [];
+    this.selectedCandidates = [];
 
     this.state = {
       connectivityModalVisible: false,
@@ -55,70 +58,38 @@ export default class VotingScreen extends Component {
       networkConnection: false
     };
 
+    this.requestSubmitVotes();
+
+    setTimeout(() => {
+      this.requestSubmitVotes();
+    }, 2000);
+
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
+      } else {
+        this.auth = JSON.parse(result);
       }
     });
 
-    this.requestData();
+    AsyncStorage.getItem('electionPositions').then((result) => {
+      if(result !== null) {
+        this.positions = JSON.parse(result);
 
-    setInterval(() => {
-      this.requestData();
-
-      var positions = [];
-      var candidates = [];
-
-      AsyncStorage.getItem('electionPositions').then((result) => {
-        if(result !== null) {
-          positions = result;
-          
-          this.setState({
-            positionElm: (
-              <View>
-                {positions.map((pos) => {
-                  return (
-                    <View>
-                      <Text
-                        style={{
-                          fontSize: 30
-                        }}>Running for {pos}</Text>
-                    </View>
-                  );
-                })}
-                <Text>Test</Text>
-              </View>
-            )
-          });
+        for(var index in this.positions) {
+          this.selectedCandidates[this.positions[index].name] = {
+            id: '',
+            style: null
+          };
         }
-      });
+      }
+    });
 
-      AsyncStorage.getItem('electionPositions').then((result) => {
-        if(result !== null) {
-          candidates = result;
-        }
-      });
-    }, 5000);
-
-    if(this.rvtInterval === null) {
-      this.rvtInterval = setInterval(() => {
-        this.setState({
-          remainingVotingTime: moment.duration(moment(this.electionUntil).diff(moment())).format('HH:mm:ss', {
-            trim: false
-          })
-        });
-
-        if(this.state.remainingVotingTime.indexOf('-') === 0) {
-          this.setState({
-            remainingVotingTime: '00:00:00'
-          });
-        }
-
-        if(this.state.remainingVotingTime === '00:00:00') {
-          // clearInterval(this.rvtInterval);
-        }
-      }, 1000);
-    }
+    AsyncStorage.getItem('electionCandidates').then((result) => {
+      if(result !== null) {
+        this.candidates = JSON.parse(result);
+      }
+    });
 
     StatusBar.setBackgroundColor('rgba(34, 34, 34, 0.5)');
     StatusBar.setTranslucent(true);
@@ -149,8 +120,6 @@ export default class VotingScreen extends Component {
     NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
       this.handleConnectivityChange(isConnected);
     });
-
-    clearInterval(this.rvtInterval);
   }
 
   render() {
@@ -165,7 +134,88 @@ export default class VotingScreen extends Component {
         <ScrollView
           style={customStyles.body}>
           <Text>Note: Your votes will only be recorded once you press the "Send Votes" button. Please double check your votes before sending it. You can only send your votes once.</Text>
-          {this.state.positionElm}
+          <View>{this.positions === null || this.candidates === null ? (
+            <Cardboard
+              additionalStyle={{
+                marginTop: 10
+              }}>
+              <View>
+                <ActivityIndicator size="large" />
+              </View>
+            </Cardboard>
+          ) : (
+            <View>
+              {this.positions.map((item, index) => {
+                return (
+                  <View
+                    key={index}>
+                    <Text
+                      key={index}
+                      style={{
+                        fontSize: 20,
+                        marginTop: 10
+                      }}>Running for {item.name}</Text>
+                    <ScrollView
+                      horizontal={true}>{this.candidates.map((item2, index2) => {
+                        if(item2.position == item.name) {
+                          if(this.selectedCandidates[item.name].id === item2.id) {
+                            return (
+                              <TouchableOpacity
+                                key={index2}
+                                style={[
+                                  {
+                                    borderColor: Colors.primaryColor,
+                                    borderWidth: 2,
+                                    marginBottom: 5
+                                  }
+                                ]}
+                                onPress={() => {
+                                  this.selectedCandidates[item.name].id = null;
+                                }}>
+                                <Cardboard
+                                  imageSource={item2.candidacy_image !== null ? {uri: item2.candidacy_image} : (item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png')))}
+                                  title={item2.full_name}
+                                  additionalStyle={{
+                                    width: 200
+                                  }}></Cardboard>
+                              </TouchableOpacity>
+                            );
+                          } else {
+                            return (
+                              <TouchableOpacity
+                                key={index2}
+                                style={[
+                                  {
+                                    borderColor: 'transparent',
+                                    borderWidth: 2,
+                                    marginBottom: 5
+                                  }
+                                ]}
+                                onPress={() => {
+                                  this.selectedCandidates[item.name].id = item2.id;
+                                }}>
+                                <Cardboard
+                                  imageSource={item2.candidacy_image !== null ? {uri: item2.candidacy_image} : (item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png')))}
+                                  title={item2.full_name}
+                                  additionalStyle={{
+                                    width: 200
+                                  }}></Cardboard>
+                              </TouchableOpacity>
+                            );
+                          }
+                        }
+                    })}</ScrollView>
+                  </View>
+                );
+              })}
+              <Button
+                title="Submit Votes"
+                type="primary"
+                onPress={() => {
+                  this.requestSubmit();
+                }} />
+            </View>
+          )}</View>
         </ScrollView>
         <Modal
           animationType="fade"
@@ -234,7 +284,17 @@ export default class VotingScreen extends Component {
     }
   }
 
-  requestData() {
+  requestSubmitVotes() {
+    var candidatesSelected = [];
+
+    for(var key in this.selectedCandidates) {
+      candidatesSelected.push(this.selectedCandidates[key].id);
+    }
+
+    this.setState({
+      loaderModalVisible: true
+    });
+
     fetch(Config.server_url + '/api/json/data/positions', {
       method: 'POST',
       headers: {
@@ -242,15 +302,27 @@ export default class VotingScreen extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        app_key: Config.app_key
+        app_key: Config.app_key,
+        account: this.auth.id,
+        candidates: candidatesSelected
       })
     }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
       if(response.status === 'ok') {
-        AsyncStorage.setItem('electionPositions', JSON.stringify(response.data));
+        ToastAndroid.show(response.message, ToastAndroid.LONG);
+
+        this.props.navigation.navigate('Home');
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
       ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
     });
 
@@ -265,12 +337,46 @@ export default class VotingScreen extends Component {
       })
     }).then((resp) => resp.json()).then((response) => {
       if(response.status === 'ok') {
-        AsyncStorage.setItem('electionPositions', JSON.stringify(response.data));
+        AsyncStorage.setItem('electionCandidates', JSON.stringify(response.data));
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
       ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+    });
+  }
+
+  requestSubmit() {
+    this.setState({
+      loaderModalVisible: true
+    });
+
+    fetch(Config.server_url + '/api/json/data/submit_votes', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key,
+        account: this.state.username
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      if(response.status === 'ok') {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      console.log(err);
     });
   }
 }

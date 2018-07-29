@@ -12,7 +12,6 @@ import {
   */
   ActivityIndicator,
   ToolbarAndroid,
-  Button,
   Image,
   Modal,
   StatusBar,
@@ -45,6 +44,7 @@ export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
 
+    this.auth = [];
     this.rvtInterval = null;
 
     this.state = {
@@ -52,7 +52,6 @@ export default class HomeScreen extends Component {
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
-      hasVoted: true,
       isElectionStarted: null,
       remainingVotingTime: null
     };
@@ -61,12 +60,11 @@ export default class HomeScreen extends Component {
       if(result === null) {
         this.props.navigation.navigate('Login');
       } else {
-        this.setState({
-          hasVoted: result.has_voted
-        });
+        this.auth = JSON.parse(result);
       }
     });
 
+    this.requestAuth();
     this.requestSettings();
 
     setInterval(() => {
@@ -142,10 +140,10 @@ export default class HomeScreen extends Component {
               marginBottom: 10
             }}>
             {this.state.remainingVotingTime === null ? (
-                <View>
-                  <ActivityIndicator size="large" />
-                </View>
-              ) : (
+              <View>
+                <ActivityIndicator size="large" />
+              </View>
+            ) : (
               this.state.remainingVotingTime === '00:00:00' ? (
                 <View>
                   <Text
@@ -172,7 +170,7 @@ export default class HomeScreen extends Component {
               )
             )}
           </Cardboard>
-          {!this.state.hasVoted &&this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
+          {!this.auth.hasVoted &&this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
             <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate('Voting');
@@ -196,29 +194,6 @@ export default class HomeScreen extends Component {
             </TouchableOpacity>
           ) : null}
         </ScrollView>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.statusModalVisible}
-          onRequestClose={() => {}}>
-          <View
-            style={styles.modal}>
-            <View
-              style={styles.modalContent}>
-              <Text>Username: {this.state.username} {typeof this.state.username}</Text>
-              <Text>Password: {this.state.password} {typeof this.state.password}</Text>
-              <TouchableHighlight
-                style={styles.buttonPrimary}
-                onPress={() => {
-                  this.setModalVisible('status', false);
-                  ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
-                }}
-                underlayColor="yellow">
-                <Text style={styles.buttonContent}>CLOSE</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
         <GroupedModals
           showLoader={this.state.loaderModalVisible}
           showConnectivity={this.state.connectivityModalVisible}
@@ -291,6 +266,37 @@ export default class HomeScreen extends Component {
       }
     }).catch((err) => {
       ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+    });
+  }
+
+  requestAuth() {
+    var username = this.auth.username;
+
+    fetch(Config.server_url + '/api/json/auth', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key,
+        username: username
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('auth', JSON.stringify(response.data));
+      }
+    }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      console.log(err);
+      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
     });
   }
 }
