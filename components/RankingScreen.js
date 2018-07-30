@@ -132,7 +132,7 @@ export default class RankingScreen extends Component {
   }
 
   render() {
-    this.dynamicElements = (this.positions === null || this.candidates === null ? (
+    this.dynamicElements = (this.positions.length === 0 || this.candidates.length === 0 ? (
       <Cardboard
         additionalStyle={{
           marginTop: 10
@@ -156,77 +156,19 @@ export default class RankingScreen extends Component {
               <ScrollView
                 horizontal={true}>{this.candidates.map((item2, index2) => {
                   if(item2.position == item.name) {
-                    if(this.selectedCandidates[item.name].id === item2.id) {
-                      return (
-                        <TouchableOpacity
-                          key={index2}
-                          style={[
-                            {
-                              borderColor: Colors.primaryColor,
-                              borderWidth: 2,
-                              marginBottom: 5
-                            }
-                          ]}
-                          onPress={() => {
-                            this.selectedCandidates[item.name].id = null;
-
-                            this.forceUpdate();
-                          }}>
-                          {item2.candidacy_image !== null ? (
-                            <Cardboard
-                              imageSource={{
-                                uri: Config.server_url + '/' + item2.candidacy_image
-                              }}
-                              title={item2.full_name}
-                              additionalStyle={{
-                                width: 125
-                              }}></Cardboard>
-                          ) : (
-                            <Cardboard
-                              imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
-                              title={item2.full_name}
-                              additionalStyle={{
-                                width: 125
-                              }}></Cardboard>
-                          )}
-                        </TouchableOpacity>
-                      );
-                    } else {
-                      return (
-                        <TouchableOpacity
-                          key={index2}
-                          style={[
-                            {
-                              borderColor: 'transparent',
-                              borderWidth: 2,
-                              marginBottom: 5
-                            }
-                          ]}
-                          onPress={() => {
-                            this.selectedCandidates[item.name].id = item2.id;
-
-                            this.forceUpdate();
-                          }}>
-                          {item2.candidacy_image !== null ? (
-                            <Cardboard
-                              imageSource={{
-                                uri: Config.server_url + '/' + item2.candidacy_image
-                              }}
-                              title={item2.full_name}
-                              additionalStyle={{
-                                width: 125
-                              }}></Cardboard>
-                          ) : (
-                            <Cardboard
-                              imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
-                              title={item2.full_name}
-                              additionalStyle={{
-                                width: 125
-                              }}></Cardboard>
-                          )}
-                        </TouchableOpacity>
-                      );
-                    }
+                    return (
+                      <Cardboard
+                        imageSource={require(./../assets/img/questionable.png)}
+                        title={'Candidate ' + (index2 + 1)}
+                        additionalStyle={{
+                          width: 125
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center'
+                          }}>{item2.number_of_votes_percentage}</Text>
+                      </Cardboard>
+                    );
                   }
               })}</ScrollView>
             </View>
@@ -237,10 +179,10 @@ export default class RankingScreen extends Component {
             marginTop: 15
           }}>
           <Button
-            title="Submit Votes"
+            title="Go back to Home"
             type="primary"
             onPress={() => {
-              this.requestSubmitVotes();
+              this.props.navigation.navigate('Home');
             }} />
         </View>
       </View>
@@ -364,7 +306,7 @@ export default class RankingScreen extends Component {
       ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
 
-    fetch(Config.server_url + '/api/json/data/candidates', {
+    fetch(Config.server_url + '/api/json/data/results', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
