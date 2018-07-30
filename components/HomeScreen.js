@@ -265,7 +265,7 @@ export default class HomeScreen extends Component {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
   }
 
@@ -296,7 +296,51 @@ export default class HomeScreen extends Component {
       });
 
       console.log(err);
-      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
+    });
+  }
+
+  requestData() {
+    fetch(Config.server_url + '/api/json/data/positions', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('electionPositions', JSON.stringify(response.data));
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
+    });
+
+    fetch(Config.server_url + '/api/json/data/candidates', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('electionCandidates', JSON.stringify(response.data));
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
   }
 }

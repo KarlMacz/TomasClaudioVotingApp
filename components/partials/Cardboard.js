@@ -14,6 +14,7 @@ import styles from './../../styles/Styles';
 
 export default class Cardboard extends Component {
   static defaultProps = {
+    imageDefaultSource: null,
     imageSource: null,
     title: null,
     subtitle: null,
@@ -53,8 +54,8 @@ export default class Cardboard extends Component {
                   borderTopLeftRadius: 4,
                   borderTopRightRadius: 4,
                   borderWidth: 1,
-                  marginBottom: 10,
-                  height: 200,
+                  marginBottom: 5,
+                  height: 100,
                   width: '100%'
                 }}
                 source={this.props.imageSource} />
@@ -65,7 +66,7 @@ export default class Cardboard extends Component {
               <Text
                 style={{
                   color: Colors.primaryColor,
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: 'bold',
                   marginBottom: (this.props.subtitle === '' ? 10 : null)
                 }}>{this.props.title}</Text>

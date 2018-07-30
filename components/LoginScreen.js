@@ -197,7 +197,7 @@ export default class LoginScreen extends Component {
       });
 
       console.log(err);
-      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
   }
 }

@@ -36,7 +36,7 @@ import Button from './partials/Button';
 
 import {Colors} from './../styles/Colors';
 import styles from './../styles/Styles';
-import customStyles from './../styles/HomeStyles';
+import customStyles from './../styles/VotingStyles';
 
 export default class VotingScreen extends Component {
   static navigationOptions = {
@@ -50,6 +50,7 @@ export default class VotingScreen extends Component {
     this.positions = [];
     this.candidates = [];
     this.selectedCandidates = [];
+    this.dynamicElements = null;
 
     this.state = {
       connectivityModalVisible: false,
@@ -59,10 +60,6 @@ export default class VotingScreen extends Component {
     };
 
     this.requestData();
-
-    setTimeout(() => {
-      this.requestData();
-    }, 2000);
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
@@ -76,12 +73,21 @@ export default class VotingScreen extends Component {
       if(result !== null) {
         this.positions = JSON.parse(result);
 
+        var pos = [];
+
         for(var index in this.positions) {
           this.selectedCandidates[this.positions[index].name] = {
-            id: '',
+            id: null,
             style: null
           };
+
+          pos.push({
+            position: this.positions[index].name,
+            id: null
+          });
         }
+
+        this.state.selectedCandidates = pos;
       }
     });
 
@@ -122,7 +128,124 @@ export default class VotingScreen extends Component {
     });
   }
 
+  radio(props) {
+  }
+
   render() {
+    this.dynamicElements = (this.positions === null || this.candidates === null ? (
+      <Cardboard
+        additionalStyle={{
+          marginTop: 10
+        }}>
+        <View>
+          <ActivityIndicator size="large" />
+        </View>
+      </Cardboard>
+    ) : (
+      <View>
+        {this.positions.map((item, index) => {
+          return (
+            <View
+              key={index}>
+              <Text
+                key={index}
+                style={{
+                  fontSize: 20,
+                  marginTop: 10
+                }}>Running for {item.name}</Text>
+              <ScrollView
+                horizontal={true}>{this.candidates.map((item2, index2) => {
+                  if(item2.position == item.name) {
+                    if(this.selectedCandidates[item.name].id === item2.id) {
+                      return (
+                        <TouchableOpacity
+                          key={index2}
+                          style={[
+                            {
+                              borderColor: Colors.primaryColor,
+                              borderWidth: 2,
+                              marginBottom: 5
+                            }
+                          ]}
+                          onPress={() => {
+                            this.selectedCandidates[item.name].id = null;
+
+                            this.forceUpdate();
+                          }}>
+                          {item2.candidacy_image !== null ? (
+                            <Cardboard
+                              imageSource={{
+                                uri: Config.server_url + '/' + item2.candidacy_image
+                              }}
+                              title={item2.full_name}
+                              additionalStyle={{
+                                width: 125
+                              }}></Cardboard>
+                          ) : (
+                            <Cardboard
+                              imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
+                              title={item2.full_name}
+                              additionalStyle={{
+                                width: 125
+                              }}></Cardboard>
+                          )}
+                        </TouchableOpacity>
+                      );
+                    } else {
+                      return (
+                        <TouchableOpacity
+                          key={index2}
+                          style={[
+                            {
+                              borderColor: 'transparent',
+                              borderWidth: 2,
+                              marginBottom: 5
+                            }
+                          ]}
+                          onPress={() => {
+                            this.selectedCandidates[item.name].id = item2.id;
+
+                            this.forceUpdate();
+                          }}>
+                          {item2.candidacy_image !== null ? (
+                            <Cardboard
+                              imageSource={{
+                                uri: Config.server_url + '/' + item2.candidacy_image
+                              }}
+                              title={item2.full_name}
+                              additionalStyle={{
+                                width: 125
+                              }}></Cardboard>
+                          ) : (
+                            <Cardboard
+                              imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
+                              title={item2.full_name}
+                              additionalStyle={{
+                                width: 125
+                              }}></Cardboard>
+                          )}
+                        </TouchableOpacity>
+                      );
+                    }
+                  }
+              })}</ScrollView>
+            </View>
+          );
+        })}
+        <View
+          style={{
+            marginTop: 15
+          }}>
+          <Button
+            title="Submit Votes"
+            type="primary"
+            onPress={() => {
+              this.requestSubmitVotes();
+            }} />
+        </View>
+      </View>
+    ));
+
     return (
       <View
         style={styles.body}>
@@ -132,90 +255,12 @@ export default class VotingScreen extends Component {
             this.props.navigation.openDrawer();
           }} />
         <ScrollView
-          style={customStyles.body}>
+          style={customStyles.body}
+          contentContainerStyle={{
+            paddingBottom: 30
+          }}>
           <Text>Note: Your votes will only be recorded once you press the "Send Votes" button. Please double check your votes before sending it. You can only send your votes once.</Text>
-          <View>{this.positions === null || this.candidates === null ? (
-            <Cardboard
-              additionalStyle={{
-                marginTop: 10
-              }}>
-              <View>
-                <ActivityIndicator size="large" />
-              </View>
-            </Cardboard>
-          ) : (
-            <View>
-              {this.positions.map((item, index) => {
-                return (
-                  <View
-                    key={index}>
-                    <Text
-                      key={index}
-                      style={{
-                        fontSize: 20,
-                        marginTop: 10
-                      }}>Running for {item.name}</Text>
-                    <ScrollView
-                      horizontal={true}>{this.candidates.map((item2, index2) => {
-                        if(item2.position == item.name) {
-                          if(this.selectedCandidates[item.name].id === item2.id) {
-                            return (
-                              <TouchableOpacity
-                                key={index2}
-                                style={[
-                                  {
-                                    borderColor: Colors.primaryColor,
-                                    borderWidth: 2,
-                                    marginBottom: 5
-                                  }
-                                ]}
-                                onPress={() => {
-                                  this.selectedCandidates[item.name].id = null;
-                                }}>
-                                <Cardboard
-                                  imageSource={item2.candidacy_image !== null ? {uri: item2.candidacy_image} : (item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png')))}
-                                  title={item2.full_name}
-                                  additionalStyle={{
-                                    width: 200
-                                  }}></Cardboard>
-                              </TouchableOpacity>
-                            );
-                          } else {
-                            return (
-                              <TouchableOpacity
-                                key={index2}
-                                style={[
-                                  {
-                                    borderColor: 'transparent',
-                                    borderWidth: 2,
-                                    marginBottom: 5
-                                  }
-                                ]}
-                                onPress={() => {
-                                  this.selectedCandidates[item.name].id = item2.id;
-                                }}>
-                                <Cardboard
-                                  imageSource={item2.candidacy_image !== null ? {uri: item2.candidacy_image} : (item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png')))}
-                                  title={item2.full_name}
-                                  additionalStyle={{
-                                    width: 200
-                                  }}></Cardboard>
-                              </TouchableOpacity>
-                            );
-                          }
-                        }
-                    })}</ScrollView>
-                  </View>
-                );
-              })}
-            </View>
-          )}</View>
-          <Button
-            title="Submit Votes"
-            type="primary"
-            onPress={() => {
-              this.requestSubmitVotes();
-            }} />
+          <View>{this.dynamicElements}</View>
         </ScrollView>
         <Modal
           animationType="fade"
@@ -285,12 +330,6 @@ export default class VotingScreen extends Component {
   }
 
   requestData() {
-    var candidatesSelected = [];
-
-    for(var key in this.selectedCandidates) {
-      candidatesSelected.push(this.selectedCandidates[key].id);
-    }
-
     this.setState({
       loaderModalVisible: true
     });
@@ -302,9 +341,7 @@ export default class VotingScreen extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        app_key: Config.app_key,
-        account: this.auth.id,
-        candidates: candidatesSelected
+        app_key: Config.app_key
       })
     }).then((resp) => resp.json()).then((response) => {
       this.setState({
@@ -321,7 +358,7 @@ export default class VotingScreen extends Component {
         loaderModalVisible: false
       });
 
-      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
 
     fetch(Config.server_url + '/api/json/data/candidates', {
@@ -334,48 +371,69 @@ export default class VotingScreen extends Component {
         app_key: Config.app_key
       })
     }).then((resp) => resp.json()).then((response) => {
+      this.setState({
+        loaderModalVisible: false
+      });
+
       if(response.status === 'ok') {
         AsyncStorage.setItem('electionCandidates', JSON.stringify(response.data));
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      ToastAndroid.show('An error has occurred while trying to make a request.', ToastAndroid.SHORT);
+      this.setState({
+        loaderModalVisible: false
+      });
+
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
   }
 
   requestSubmitVotes() {
+    var candidatesSelected = [];
+
+    for(var index in this.selectedCandidates) {
+      if(this.selectedCandidates[index].id !== null) {
+        candidatesSelected.push(this.selectedCandidates[index].id);
+      }
+    }
+
+    console.log(candidatesSelected);
+
     this.setState({
       loaderModalVisible: true
     });
 
-    fetch(Config.server_url + '/api/json/data/submit_votes', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        app_key: Config.app_key,
-        account: this.state.username
-      })
-    }).then((resp) => resp.json()).then((response) => {
-      this.setState({
-        loaderModalVisible: false
-      });
+    setTimeout(() => {
+      fetch(Config.server_url + '/api/json/data/submit_votes', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          app_key: Config.app_key,
+          account: this.auth.id,
+          candidates: candidatesSelected
+        })
+      }).then((resp) => resp.json()).then((response) => {
+        this.setState({
+          loaderModalVisible: false
+        });
 
-      if(response.status === 'ok') {
-        ToastAndroid.show(response.message, ToastAndroid.SHORT);
-      } else {
-        ToastAndroid.show(response.message, ToastAndroid.SHORT);
-      }
-    }).catch((err) => {
-      this.setState({
-        loaderModalVisible: false
-      });
+        if(response.status === 'ok') {
+          ToastAndroid.show(response.message, ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show(response.message, ToastAndroid.SHORT);
+        }
+      }).catch((err) => {
+        this.setState({
+          loaderModalVisible: false
+        });
 
-      console.log(err);
-      ToastAndroid.show('An error has occurred while trying to log in.', ToastAndroid.SHORT);
-    });
+        console.log(err);
+        ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
+      });
+    }, 2000);
   }
 }
