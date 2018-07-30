@@ -38,7 +38,7 @@ import {Colors} from './../styles/Colors';
 import styles from './../styles/Styles';
 import customStyles from './../styles/VotingStyles';
 
-export default class VotingScreen extends Component {
+export default class RankingScreen extends Component {
   static navigationOptions = {
     drawerLabel: () => null
   };
@@ -259,7 +259,10 @@ export default class VotingScreen extends Component {
           contentContainerStyle={{
             paddingBottom: 30
           }}>
-          <Text>Note: Your votes will only be recorded once you press the "Send Votes" button. Please double check your votes before sending it. You can only send your votes once.</Text>
+          <Text
+            style={{
+              fontSize: 20
+            }}>Ranking</Text>
           <View>{this.dynamicElements}</View>
         </ScrollView>
         <Modal
@@ -387,53 +390,5 @@ export default class VotingScreen extends Component {
 
       ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
-  }
-
-  requestSubmitVotes() {
-    var candidatesSelected = [];
-
-    for(var index in this.selectedCandidates) {
-      if(this.selectedCandidates[index].id !== null) {
-        candidatesSelected.push(this.selectedCandidates[index].id);
-      }
-    }
-
-    console.log(candidatesSelected);
-
-    this.setState({
-      loaderModalVisible: true
-    });
-
-    setTimeout(() => {
-      fetch(Config.server_url + '/api/json/data/submit_votes', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          app_key: Config.app_key,
-          account: this.auth.id,
-          candidates: candidatesSelected
-        })
-      }).then((resp) => resp.json()).then((response) => {
-        this.setState({
-          loaderModalVisible: false
-        });
-
-        if(response.status === 'ok') {
-          ToastAndroid.show(response.message, ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show(response.message, ToastAndroid.SHORT);
-        }
-      }).catch((err) => {
-        this.setState({
-          loaderModalVisible: false
-        });
-
-        console.log(err);
-        ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
-      });
-    }, 2000);
   }
 }
