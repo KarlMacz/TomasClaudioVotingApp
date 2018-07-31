@@ -15,6 +15,8 @@ import {
   View
 } from 'react-native';
 
+import PushNotifs from './../PushNotifs';
+
 import styles from './../styles/Styles';
 
 export default class Logout extends Component {
@@ -27,9 +29,19 @@ export default class Logout extends Component {
   constructor(props) {
     super(props);
 
+    PushNotifs.fetchNotification();
+
+    this.notifInterval = setInterval(() => {
+      PushNotifs.fetchNotification();
+    }, 5000);
+
     AsyncStorage.removeItem('auth');
 
     StatusBar.setHidden(true);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.notifInterval);
   }
 
   render() {

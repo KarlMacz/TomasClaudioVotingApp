@@ -28,6 +28,7 @@ import moment from 'moment';
 import 'moment-duration-format';
 
 import {Config} from './../Config';
+import PushNotifs from './../PushNotifs';
 
 import Navbar from './partials/Navbar';
 import GroupedModals from './partials/GroupedModals';
@@ -60,6 +61,12 @@ export default class RankingScreen extends Component {
     };
 
     this.requestData();
+
+    PushNotifs.fetchNotification();
+
+    this.notifInterval = setInterval(() => {
+      PushNotifs.fetchNotification();
+    }, 5000);
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
@@ -126,9 +133,8 @@ export default class RankingScreen extends Component {
     NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
       this.handleConnectivityChange(isConnected);
     });
-  }
 
-  radio(props) {
+    clearInterval(this.notifInterval);
   }
 
   render() {

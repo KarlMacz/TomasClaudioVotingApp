@@ -23,6 +23,7 @@ import {
 } from 'react-native';
 
 import {Config} from './../Config';
+import PushNotifs from './../PushNotifs';
 
 import GroupedModals from './partials/GroupedModals';
 import Button from './partials/Button';
@@ -51,6 +52,12 @@ export default class LoginScreen extends Component {
       username: ''
     };
 
+    PushNotifs.fetchNotification();
+
+    this.notifInterval = setInterval(() => {
+      PushNotifs.fetchNotification();
+    }, 5000);
+
     AsyncStorage.getItem('auth').then((result) => {
       if(result !== null) {
         this.props.navigation.navigate('Home');
@@ -74,6 +81,8 @@ export default class LoginScreen extends Component {
     NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
       this.handleConnectivityChange(isConnected);
     });
+    
+    clearInterval(this.notifInterval);
   }
 
   render() {

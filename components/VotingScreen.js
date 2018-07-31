@@ -128,9 +128,6 @@ export default class VotingScreen extends Component {
     });
   }
 
-  radio(props) {
-  }
-
   render() {
     this.dynamicElements = (this.positions === null || this.candidates === null ? (
       <Cardboard

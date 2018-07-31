@@ -18,6 +18,8 @@ import {
   View
 } from 'react-native';
 
+import PushNotifs from './../PushNotifs';
+
 import styles from './../styles/Styles';
 
 export default class SplashScreen extends Component {
@@ -33,6 +35,12 @@ export default class SplashScreen extends Component {
       isAuthenticated: false,
       fadeAnimation: new Animated.Value(0)
     };
+
+    PushNotifs.fetchNotification();
+
+    this.notifInterval = setInterval(() => {
+      PushNotifs.fetchNotification();
+    }, 5000);
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result !== null) {
@@ -67,6 +75,10 @@ export default class SplashScreen extends Component {
         this.props.navigation.navigate('Login');
       }
     });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.notifInterval);
   }
 
   render() {
