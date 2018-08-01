@@ -22,6 +22,8 @@ import {
   View
 } from 'react-native';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import {Config} from './../Config';
 
 import GroupedModals from './partials/GroupedModals';
@@ -83,6 +85,26 @@ export default class LoginScreen extends Component {
               source={require('./../assets/img/tcc_logo.png')} />
             <Text style={customStyles.headerTitleText}>Worthy Votes</Text>
           </View>
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            top: 5,
+            left: 5
+          }}>
+          <Button
+            title={(
+              <FontAwesome
+                style={{
+                  color: 'white',
+                  fontSize: 15
+                }}
+                name="chevron-left" />
+            )}
+            type="primary"
+            onPress={() => {
+              this.props.navigation.navigate('Login');
+            }} />
         </View>
         <View
           style={customStyles.body}>

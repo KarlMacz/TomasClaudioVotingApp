@@ -22,6 +22,8 @@ import {
   View
 } from 'react-native';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import {Config} from './../Config';
 
 import GroupedModals from './partials/GroupedModals';
@@ -81,8 +83,18 @@ export default class LoginScreen extends Component {
       <View
         style={styles.body}>
         <View
+          style={customStyles.header}>
+          <View
+            style={customStyles.headerContent}>
+            <Image
+              style={customStyles.headerLogo}
+              source={require('./../assets/img/tcc_logo.png')} />
+            <Text style={customStyles.headerTitleText}>Worthy Votes</Text>
+          </View>
+        </View>
+        <View
           style={{
-            position: 'fixed',
+            position: 'absolute',
             top: 5,
             right: 5
           }}>
@@ -99,16 +111,6 @@ export default class LoginScreen extends Component {
             onPress={() => {
               this.props.navigation.navigate('Config');
             }} />
-        </View>
-        <View
-          style={customStyles.header}>
-          <View
-            style={customStyles.headerContent}>
-            <Image
-              style={customStyles.headerLogo}
-              source={require('./../assets/img/tcc_logo.png')} />
-            <Text style={customStyles.headerTitleText}>Worthy Votes</Text>
-          </View>
         </View>
         <View
           style={customStyles.body}>
