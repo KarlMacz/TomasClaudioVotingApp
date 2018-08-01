@@ -81,6 +81,26 @@ export default class LoginScreen extends Component {
       <View
         style={styles.body}>
         <View
+          style={{
+            position: 'fixed',
+            top: 5,
+            right: 5
+          }}>
+          <Button
+            title={(
+              <FontAwesome
+                style={{
+                  color: 'white',
+                  fontSize: 15
+                }}
+                name="cog" />
+            )}
+            type="primary"
+            onPress={() => {
+              this.props.navigation.navigate('Config');
+            }} />
+        </View>
+        <View
           style={customStyles.header}>
           <View
             style={customStyles.headerContent}>
@@ -110,19 +130,6 @@ export default class LoginScreen extends Component {
               type="primary"
               onPress={() => {
                 this.requestLogin();
-              }} />
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 5,
-              left: 5
-            }}>
-            <Button
-              title="Configure"
-              type="default"
-              onPress={() => {
-                this.props.navigation.navigate('Config');
               }} />
           </View>
         </View>
