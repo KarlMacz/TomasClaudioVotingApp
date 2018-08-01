@@ -67,7 +67,8 @@ export default class HomeScreen extends Component {
       }
     });
 
-    setInterval(() => {
+    this.dataInterval = setInterval(() => {
+      this.requestAuth();
       this.requestSettings();
     }, 5000);
 
@@ -121,6 +122,7 @@ export default class HomeScreen extends Component {
       this.handleConnectivityChange(isConnected);
     });
 
+    clearInterval(this.dataInterval);
     clearInterval(this.rvtInterval);
   }
 
@@ -170,7 +172,7 @@ export default class HomeScreen extends Component {
               )
             )}
           </Cardboard>
-          {this.auth.hasVoted !== 1 && this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
+          {this.auth.has_voted != 1 && this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
             <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate('Voting');
@@ -189,6 +191,29 @@ export default class HomeScreen extends Component {
                     style={{
                       textAlign: 'center'
                     }}>Tap here to start voting.</Text>
+                </View>
+              </Cardboard>
+            </TouchableOpacity>
+          ) : null}
+          {this.auth.has_voted == 1 ? (
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate('Ranking');
+              }}>
+              <Cardboard
+                additionalStyle={{
+                  marginBottom: 10
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 30,
+                      textAlign: 'center'
+                    }}>Candidates Ranking</Text>
+                  <Text
+                    style={{
+                      textAlign: 'center'
+                    }}>Tap here to view ranking.</Text>
                 </View>
               </Cardboard>
             </TouchableOpacity>
@@ -289,6 +314,8 @@ export default class HomeScreen extends Component {
 
       if(response.status === 'ok') {
         AsyncStorage.setItem('auth', JSON.stringify(response.data));
+
+        this.auth = response.data;
       }
     }).catch((err) => {
       this.setState({

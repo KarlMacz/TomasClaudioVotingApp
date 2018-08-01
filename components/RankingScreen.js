@@ -61,6 +61,10 @@ export default class RankingScreen extends Component {
 
     this.requestData();
 
+    this.dataInterval = setInterval(() => {
+      this.requestData();
+    }, 5000);
+
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
@@ -126,9 +130,8 @@ export default class RankingScreen extends Component {
     NetInfo.isConnected.removeEventListener('connectionChange', (isConnected) => {
       this.handleConnectivityChange(isConnected);
     });
-  }
 
-  radio(props) {
+    clearInterval(this.dataInterval);
   }
 
   render() {
@@ -160,10 +163,14 @@ export default class RankingScreen extends Component {
                       <Cardboard
                         imageSource={require('./../assets/img/questionable.png')}
                         title={'Candidate ' + (index2 + 1)}
-                        subtitle={item2.number_of_votes_percentage}
                         additionalStyle={{
                           width: 125
                         }}>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                          }}>{item2.number_of_votes_percentage}</Text>
                       </Cardboard>
                     );
                   }
@@ -200,7 +207,9 @@ export default class RankingScreen extends Component {
           }}>
           <Text
             style={{
-              fontSize: 20
+              fontSize: 30,
+              fontWeight: 'bold',
+              textAlign: 'center'
             }}>Ranking</Text>
           <View>{this.dynamicElements}</View>
         </ScrollView>
@@ -272,10 +281,6 @@ export default class RankingScreen extends Component {
   }
 
   requestData() {
-    this.setState({
-      loaderModalVisible: true
-    });
-
     fetch(Config.server_url + '/api/json/data/positions', {
       method: 'POST',
       headers: {
@@ -286,20 +291,12 @@ export default class RankingScreen extends Component {
         app_key: Config.app_key
       })
     }).then((resp) => resp.json()).then((response) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       if(response.status === 'ok') {
         AsyncStorage.setItem('electionPositions', JSON.stringify(response.data));
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
 
@@ -313,20 +310,12 @@ export default class RankingScreen extends Component {
         app_key: Config.app_key
       })
     }).then((resp) => resp.json()).then((response) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       if(response.status === 'ok') {
         AsyncStorage.setItem('electionCandidates', JSON.stringify(response.data));
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
   }

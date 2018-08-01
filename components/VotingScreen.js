@@ -61,6 +61,10 @@ export default class VotingScreen extends Component {
 
     this.requestData();
 
+    setTimeout(() => {
+      this.requestData();
+    }, 1000);
+
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
