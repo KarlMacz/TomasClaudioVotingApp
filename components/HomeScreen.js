@@ -56,6 +56,9 @@ export default class HomeScreen extends Component {
       remainingVotingTime: null
     };
 
+    this.requestAuth();
+    this.requestSettings();
+
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
         this.props.navigation.navigate('Login');
@@ -63,9 +66,6 @@ export default class HomeScreen extends Component {
         this.auth = JSON.parse(result);
       }
     });
-
-    this.requestAuth();
-    this.requestSettings();
 
     setInterval(() => {
       this.requestSettings();
@@ -170,7 +170,7 @@ export default class HomeScreen extends Component {
               )
             )}
           </Cardboard>
-          {!this.auth.hasVoted &&this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
+          {this.auth.hasVoted !== 1 && this.state.remainingVotingTime !== null && this.state.remainingVotingTime !== '00:00:00' && this.state.isElectionStarted == 1 ? (
             <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate('Voting');
