@@ -22,6 +22,7 @@ import {
 } from 'react-navigation';
 
 import SplashScreen from './components/SplashScreen';
+import ConfigScreen from './components/ConfigScreen';
 import LoginScreen from './components/LoginScreen';
 import LogoutScreen from './components/LogoutScreen';
 import HomeScreen from './components/HomeScreen';
@@ -51,6 +52,9 @@ const RootDrawer = createDrawerNavigator({
 const RootStack = createStackNavigator({
   Login: {
     screen: LoginScreen
+  },
+  Config: {
+    screen: ConfigScreen
   }
 }, {
   initialRouteName: 'Login'

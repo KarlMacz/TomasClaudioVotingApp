@@ -112,6 +112,19 @@ export default class LoginScreen extends Component {
                 this.requestLogin();
               }} />
           </View>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 5,
+              left: 5
+            }}>
+            <Button
+              title="Configure"
+              type="default"
+              onPress={() => {
+                this.props.navigation.navigate('Config');
+              }} />
+          </View>
         </View>
         <View
           style={customStyles.footer}>
@@ -166,6 +179,8 @@ export default class LoginScreen extends Component {
     this.setState({
       loaderModalVisible: true
     });
+
+    console.log(Config.server_url);
 
     fetch(Config.server_url + '/api/json/auth', {
       method: 'POST',
