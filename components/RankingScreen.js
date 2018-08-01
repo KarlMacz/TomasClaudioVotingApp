@@ -158,7 +158,7 @@ export default class RankingScreen extends Component {
                   if(item2.position == item.name) {
                     return (
                       <Cardboard
-                        imageSource={require(./../assets/img/questionable.png)}
+                        imageSource={require('./../assets/img/questionable.png')}
                         title={'Candidate ' + (index2 + 1)}
                         additionalStyle={{
                           width: 125

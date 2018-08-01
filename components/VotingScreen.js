@@ -423,6 +423,8 @@ export default class VotingScreen extends Component {
 
         if(response.status === 'ok') {
           ToastAndroid.show(response.message, ToastAndroid.SHORT);
+          
+          this.props.navigation.navigate('Ranking');
         } else {
           ToastAndroid.show(response.message, ToastAndroid.SHORT);
         }
