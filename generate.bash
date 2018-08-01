@@ -24,7 +24,7 @@ generate() {
             if [ -z $2 ]; then
                 explorer .
             else
-                cp ./ $2;
+                cp ./app-release.apk $2/app-release.apk;
             fi
 
             cd ./../../../../../;
