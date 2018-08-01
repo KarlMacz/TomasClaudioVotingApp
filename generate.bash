@@ -18,13 +18,16 @@ generate() {
     else
         if [ $1 == "apk" ]; then
             cd ./android;
+            cd ./app/build/outputs/apk;
+            rm -rf ./app-release.apk;
+            cd ./../../../../../;
             ./gradlew assembleRelease;
             cd ./app/build/outputs/apk;
 
             if [ -z $2 ]; then
-                explorer .
+                explorer .;
             else
-                cp ./app-release.apk $2/app-release.apk;
+                cp ./app-release.apk $2;
             fi
 
             cd ./../../../../../;
