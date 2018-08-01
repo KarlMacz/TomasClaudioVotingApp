@@ -160,13 +160,10 @@ export default class RankingScreen extends Component {
                       <Cardboard
                         imageSource={require('./../assets/img/questionable.png')}
                         title={'Candidate ' + (index2 + 1)}
+                        subtitle={item2.number_of_votes_percentage}
                         additionalStyle={{
                           width: 125
                         }}>
-                        <Text
-                          style={{
-                            textAlign: 'center'
-                          }}>{item2.number_of_votes_percentage}</Text>
                       </Cardboard>
                     );
                   }
