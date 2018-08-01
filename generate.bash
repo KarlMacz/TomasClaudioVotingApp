@@ -17,10 +17,11 @@ generate() {
         echo "    ipa                   Generate IPA file.";
     else
         if [ $1 == "apk" ]; then
+            if [ -f ./android/app/build/outputs/apk/app-release.apk ]; then
+                rm -rf ./android/app/build/outputs/apk/app-release.apk;
+            fi
+
             cd ./android;
-            cd ./app/build/outputs/apk;
-            rm -rf ./app-release.apk;
-            cd ./../../../../../;
             ./gradlew assembleRelease;
             cd ./app/build/outputs/apk;
 
