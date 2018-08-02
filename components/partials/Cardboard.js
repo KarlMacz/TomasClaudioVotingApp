@@ -66,7 +66,7 @@ export default class Cardboard extends Component {
               <Text
                 style={{
                   color: Colors.primaryColor,
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: 'bold',
                   marginBottom: (this.props.subtitle === '' ? 10 : null)
                 }}>{this.props.title}</Text>
