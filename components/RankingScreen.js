@@ -51,6 +51,7 @@ export default class RankingScreen extends Component {
     this.candidates = [];
     this.selectedCandidates = [];
     this.dynamicElements = null;
+    this.isResultsReleased = 0;
 
     this.state = {
       connectivityModalVisible: false,
@@ -60,9 +61,11 @@ export default class RankingScreen extends Component {
     };
 
     this.requestData();
+    this.requestSettings();
 
     this.dataInterval = setInterval(() => {
       this.requestData();
+      this.requestSettings();
     }, 5000);
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -159,20 +162,56 @@ export default class RankingScreen extends Component {
               <ScrollView
                 horizontal={true}>{this.candidates.map((item2, index2) => {
                   if(item2.position == item.name) {
-                    return (
-                      <Cardboard
-                        imageSource={require('./../assets/img/questionable.png')}
-                        title={'Candidate ' + (index2 + 1)}
-                        additionalStyle={{
-                          width: 125
-                        }}>
-                        <Text
-                          style={{
-                            fontWeight: 'bold',
-                            textAlign: 'center'
-                          }}>{item2.number_of_votes_percentage}</Text>
-                      </Cardboard>
-                    );
+                    if(this.isResultsReleased == 1) {
+                      if(item2.candidacy_image !== null) {
+                        return (
+                          <Cardboard
+                            imageSource={{
+                              uri: Config.server_url + '/' + item2.candidacy_image
+                            }}
+                            title={item2.full_name}
+                            additionalStyle={{
+                              width: 125
+                            }}>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                textAlign: 'center'
+                              }}>{item2.number_of_votes_percentage}</Text>
+                          </Cardboard>
+                        );
+                      } else {
+                        return (
+                          <Cardboard
+                            imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
+                            title={item2.full_name}
+                            additionalStyle={{
+                              width: 125
+                            }}>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                textAlign: 'center'
+                              }}>{item2.number_of_votes_percentage}</Text>
+                          </Cardboard>
+                        );
+                      }
+                    } else {
+                      return (
+                        <Cardboard
+                          imageSource={require('./../assets/img/questionable.png')}
+                          title={'Candidate ' + (index2 + 1)}
+                          additionalStyle={{
+                            width: 125
+                          }}>
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              textAlign: 'center'
+                            }}>{item2.number_of_votes_percentage}</Text>
+                        </Cardboard>
+                      );
+                    }
                   }
               })}</ScrollView>
             </View>
@@ -312,6 +351,33 @@ export default class RankingScreen extends Component {
     }).then((resp) => resp.json()).then((response) => {
       if(response.status === 'ok') {
         AsyncStorage.setItem('electionCandidates', JSON.stringify(response.data));
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
+    });
+  }
+
+  requestSettings() {
+    fetch(Config.server_url + '/api/json/data/settings', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        var settings = response.data;
+
+        for(var index in settings) {
+          if(settings[index].name === 'is_results_released') {
+            this.isResultsReleased = settings[index].value;
+          }
+        }
       } else {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
