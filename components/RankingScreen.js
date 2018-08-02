@@ -378,6 +378,10 @@ export default class RankingScreen extends Component {
 
         for(var index in settings) {
           if(settings[index].name === 'is_results_released') {
+            if(this.isResultsReleased !== settings[index].value) {
+              this.forceUpdate();
+            }
+
             this.isResultsReleased = settings[index].value;
           }
         }
