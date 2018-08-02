@@ -166,6 +166,7 @@ export default class RankingScreen extends Component {
                       if(item2.candidacy_image !== null) {
                         return (
                           <Cardboard
+                            key={index2}
                             imageSource={{
                               uri: Config.server_url + '/' + item2.candidacy_image
                             }}
@@ -183,6 +184,7 @@ export default class RankingScreen extends Component {
                       } else {
                         return (
                           <Cardboard
+                            key={index2}
                             imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
                             title={item2.full_name}
                             additionalStyle={{
@@ -199,6 +201,7 @@ export default class RankingScreen extends Component {
                     } else {
                       return (
                         <Cardboard
+                          key={index2}
                           imageSource={require('./../assets/img/questionable.png')}
                           title={'Candidate ' + (index2 + 1)}
                           additionalStyle={{
