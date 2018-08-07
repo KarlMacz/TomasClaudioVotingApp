@@ -195,7 +195,7 @@ export default class HomeScreen extends Component {
               </Cardboard>
             </TouchableOpacity>
           ) : null}
-          {this.auth.has_voted == 1 ? (
+          {this.auth.has_voted == 1 || this.state.remainingVotingTime === '00:00:00' ? (
             <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate('Ranking');

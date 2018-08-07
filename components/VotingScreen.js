@@ -263,7 +263,7 @@ export default class VotingScreen extends Component {
           contentContainerStyle={{
             paddingBottom: 30
           }}>
-          <Text>Note: Your votes will only be recorded once you press the "Send Votes" button. Please double check your votes before sending it. You can only send your votes once.</Text>
+          <Text>Note: Your votes will only be recorded once you press the "Submit Votes" button. Please double check your votes before sending it. You can only send your votes once.</Text>
           <View>{this.dynamicElements}</View>
         </ScrollView>
         <Modal
