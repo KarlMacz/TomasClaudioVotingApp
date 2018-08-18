@@ -3,6 +3,7 @@ import {
   /*
   * APIs
   */
+  AppState,
   ToastAndroid,
 
   /*
@@ -20,6 +21,7 @@ import {
   DrawerItems,
   SafeAreaView
 } from 'react-navigation';
+import PushNotification from 'react-native-push-notification';
 
 import SplashScreen from './components/SplashScreen';
 import ConfigScreen from './components/ConfigScreen';
@@ -71,6 +73,28 @@ const RootNavi = createSwitchNavigator({
 });
 
 export default class App extends Component {
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange(appState) {
+    if(appState === 'background') {
+      PushNotification.localNotification({
+        title: 'TestNotif',
+        message: 'App is now in background.'
+      });
+    } else {
+      PushNotification.localNotification({
+        title: 'TestNotif',
+        message: 'App is now active.'
+      });
+    }
+  }
+
   render() {
     return (
       <RootNavi />
