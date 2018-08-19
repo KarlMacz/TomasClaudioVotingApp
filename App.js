@@ -86,16 +86,16 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChange);
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    AppState.removeEventListener('change', this._handleAppStateChange);
 
     clearInterval(this.appStateInterval);
   }
 
-  handleAppStateChange = (appState) => {
+  _handleAppStateChange = (appState) => {
     if(this.state.appState !== appState) {
       this.setState({
         appState: appState
