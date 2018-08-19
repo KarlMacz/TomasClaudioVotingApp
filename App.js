@@ -21,6 +21,7 @@ import {
   DrawerItems,
   SafeAreaView
 } from 'react-navigation';
+import BackgroundTask from 'react-native-background-task';
 import PushNotification from 'react-native-push-notification';
 
 import {Config} from './Config';
@@ -74,6 +75,49 @@ const RootNavi = createSwitchNavigator({
   initialRouteName: 'Splash'
 });
 
+var getCurrentTimestamp = () => {
+  var now = new Date();
+  var yy = now.getFullYear();
+  var mm = now.getMonth() + 1;
+  var dd = now.getDate();
+  var h = now.getHours();
+  var m = now.getMinutes();
+  var s = now.getSeconds();
+
+  if(mm < 10) {
+    mm = '0' + mm;
+  }
+
+  if(dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if(h < 10) {
+    h = '0' + h;
+  }
+
+  if(m < 10) {
+    m = '0' + m;
+  }
+
+  if(s < 10) {
+    s = '0' + s;
+  }
+
+  return yy + '-' + mm + '-' + dd + ' ' + h + ':' + m + ':' + s;
+}
+
+BackgroundTask.define(() => {
+  PushNotification.localNotification({
+    title: 'Tomas Claudio College Voting App',
+    message: 'App is currently on background.'
+  });
+
+  console.log('[' + getCurrentTimestamp() + '] Push Notif on background.');
+
+  BackgroundTask.finish();
+});
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -101,38 +145,36 @@ export default class App extends Component {
         appState: appState
       });
 
+      BackgroundTask.schedule({
+        period: 5
+      });
+
       clearInterval(this.appStateInterval);
 
-      console.log('App state has changed.');
+      console.log('[' + getCurrentTimestamp() + '] App state has changed.');
     }
 
-    this.appStateInterval = setInterval(() => {
-        console.log('Current App State: ' + appState);
-
-        /*PushNotification.localNotification({
-          title: 'Tomas Claudio College Voting App',
-          message: 'Testing'
-        });*/
-        /*fetch(Config.server_url + '/api/json/notifications', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            app_key: Config.app_key
-          })
-        }).then((resp) => resp.json()).then((response) => {
-          if(response.message !== null) {
-            PushNotification.localNotification({
-              title: 'Tomas Claudio College Voting App',
-              message: response.message
-            });
-          }
-        }).catch((err) => {
-          console.log(err);
-        });*/
-      }, 5000);
+    /*this.appStateInterval = setInterval(() => {
+      fetch(Config.server_url + '/api/json/notifications', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          app_key: Config.app_key
+        })
+      }).then((resp) => resp.json()).then((response) => {
+        if(response.message !== null) {
+          PushNotification.localNotification({
+            title: 'Tomas Claudio College Voting App',
+            message: response.message
+          });
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    }, 5000);*/
   }
 
   render() {
