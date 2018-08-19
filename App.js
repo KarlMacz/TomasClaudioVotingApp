@@ -23,6 +23,8 @@ import {
 } from 'react-navigation';
 import PushNotification from 'react-native-push-notification';
 
+import {Config} from './Config';
+
 import SplashScreen from './components/SplashScreen';
 import ConfigScreen from './components/ConfigScreen';
 import LoginScreen from './components/LoginScreen';
@@ -73,26 +75,64 @@ const RootNavi = createSwitchNavigator({
 });
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.appStateInterval = null;
+
+    this.state = {
+      appState: AppState.currentState
+    };
+  }
+
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange);
+
+    clearInterval(this.appStateInterval);
   }
 
-  handleAppStateChange(appState) {
-    if(appState === 'background') {
-      PushNotification.localNotification({
-        title: 'TestNotif',
-        message: 'App is now in background.'
+  handleAppStateChange = (appState) => {
+    if(this.state.appState !== appState) {
+      this.setState({
+        appState: appState
       });
-    } else {
-      PushNotification.localNotification({
-        title: 'TestNotif',
-        message: 'App is now active.'
-      });
+
+      clearInterval(this.appStateInterval);
+
+      console.log('App state has changed.');
     }
+
+    this.appStateInterval = setInterval(() => {
+        console.log('Current App State: ' + appState);
+
+        /*PushNotification.localNotification({
+          title: 'Tomas Claudio College Voting App',
+          message: 'Testing'
+        });*/
+        /*fetch(Config.server_url + '/api/json/notifications', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            app_key: Config.app_key
+          })
+        }).then((resp) => resp.json()).then((response) => {
+          if(response.message !== null) {
+            PushNotification.localNotification({
+              title: 'Tomas Claudio College Voting App',
+              message: response.message
+            });
+          }
+        }).catch((err) => {
+          console.log(err);
+        });*/
+      }, 5000);
   }
 
   render() {
