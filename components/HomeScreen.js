@@ -23,6 +23,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
+import PushNotification from 'react-native-push-notification';
 
 import moment from 'moment';
 import 'moment-duration-format';
@@ -46,6 +47,7 @@ export default class HomeScreen extends Component {
 
     this.auth = [];
     this.rvtInterval = null;
+    this.notifInterval = null;
 
     this.state = {
       connectivityModalVisible: false,
@@ -64,6 +66,32 @@ export default class HomeScreen extends Component {
         this.props.navigation.navigate('Login');
       } else {
         this.auth = JSON.parse(result);
+
+        this.notifInterval = setInterval(() => {
+          fetch(Config.server_url + '/api/json/notifications', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              app_key: Config.app_key,
+              username: this.auth.username
+            })
+          }).then((resp) => resp.json()).then((response) => {
+            if(response.status === 'ok') {
+              if(response.data.length > 0) {
+                for(var i = 0; i < response.data.length; i++) {
+                  PushNotification.localNotification({
+                    title: response.data[i].subject,
+                    message: response.data[i].message
+                  });
+                }
+              }
+            }
+          }).catch((err) => {
+          });
+        }, 5000);
       }
     });
 
@@ -124,6 +152,7 @@ export default class HomeScreen extends Component {
 
     clearInterval(this.dataInterval);
     clearInterval(this.rvtInterval);
+    clearInterval(this.notifInterval);
   }
 
   render() {

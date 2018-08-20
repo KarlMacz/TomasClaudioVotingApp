@@ -4,6 +4,7 @@ import {
   * APIs
   */
   AppState,
+  AsyncStorage,
   ToastAndroid,
 
   /*
@@ -107,11 +108,47 @@ var getCurrentTimestamp = () => {
   return yy + '-' + mm + '-' + dd + ' ' + h + ':' + m + ':' + s;
 }
 
-BackgroundTask.define(() => {
-  PushNotification.localNotification({
-    title: 'Tomas Claudio College Voting App',
-    message: 'App is currently on background.'
+function fetchPushNotifications() {
+  var auth = null;
+  var username = '';
+
+  AsyncStorage.getItem('auth').then((result) => {
+    if(result !== null) {
+      auth = JSON.parse(result);
+    }
   });
+
+  if(auth !== null) {
+    username = auth.username;
+
+    fetch(Config.server_url + '/api/json/notifications', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key,
+        username: username
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        if(response.data.length > 0) {
+          for(var i = 0; i < response.data.length; i++) {
+            PushNotification.localNotification({
+              title: response.data[i].subject,
+              message: response.data[i].message
+            });
+          }
+        }
+      }
+    }).catch((err) => {
+    });
+  }
+}
+
+BackgroundTask.define(() => {
+  fetchPushNotifications();
 
   console.log('[' + getCurrentTimestamp() + '] Push Notif on background.');
 
@@ -121,8 +158,6 @@ BackgroundTask.define(() => {
 export default class App extends Component {
   constructor(props) {
     super(props);
-
-    this.appStateInterval = null;
 
     this.state = {
       appState: AppState.currentState
@@ -135,8 +170,6 @@ export default class App extends Component {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
-
-    clearInterval(this.appStateInterval);
   }
 
   _handleAppStateChange = (appState) => {
@@ -145,36 +178,14 @@ export default class App extends Component {
         appState: appState
       });
 
+      fetchPushNotifications();
+
       BackgroundTask.schedule({
         period: 5
       });
 
-      clearInterval(this.appStateInterval);
-
       console.log('[' + getCurrentTimestamp() + '] App state has changed.');
     }
-
-    /*this.appStateInterval = setInterval(() => {
-      fetch(Config.server_url + '/api/json/notifications', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          app_key: Config.app_key
-        })
-      }).then((resp) => resp.json()).then((response) => {
-        if(response.message !== null) {
-          PushNotification.localNotification({
-            title: 'Tomas Claudio College Voting App',
-            message: response.message
-          });
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
-    }, 5000);*/
   }
 
   render() {

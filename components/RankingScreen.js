@@ -14,6 +14,7 @@ import {
   ToolbarAndroid,
   Image,
   Modal,
+  RefreshControl,
   StatusBar,
   ScrollView,
   Text,
@@ -54,6 +55,7 @@ export default class RankingScreen extends Component {
     this.isResultsReleased = 0;
 
     this.state = {
+      refreshing: false,
       connectivityModalVisible: false,
       statusModalVisible: false,
       loaderModalVisible: false,
@@ -67,6 +69,8 @@ export default class RankingScreen extends Component {
       this.requestData();
       this.requestSettings();
     }, 5000);
+
+    this.handlePage();
 
     AsyncStorage.getItem('auth').then((result) => {
       if(result === null) {
@@ -138,15 +142,111 @@ export default class RankingScreen extends Component {
   }
 
   render() {
+    return (
+      <View
+        style={styles.body}>
+        <Navbar
+          title="Worthy Votes"
+          onMenuPress={() => {
+            this.props.navigation.openDrawer();
+          }} />
+        <ScrollView
+          contentContainerStyle={{
+            padding: 15
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => {
+                this.setState({
+                  refreshing: true
+                });
+
+                this.requestData();
+
+                setTimeout(() => {
+                  this.handlePage();
+                  
+                  this.setState({
+                    refreshing: false
+                  });
+                }, 2000);
+              }}/>
+          }>
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: 'bold',
+              textAlign: 'center'
+            }}>Ranking</Text>
+          <View>{this.dynamicElements}</View>
+        </ScrollView>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.statusModalVisible}
+          onRequestClose={() => {}}>
+          <View
+            style={styles.modal}>
+            <View
+              style={styles.modalContent}>
+              <Text>Username: {this.state.username} {typeof this.state.username}</Text>
+              <Text>Password: {this.state.password} {typeof this.state.password}</Text>
+              <TouchableHighlight
+                style={styles.buttonPrimary}
+                onPress={() => {
+                  this.setModalVisible('status', false);
+                  ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
+                }}
+                underlayColor="yellow">
+                <Text style={styles.buttonContent}>CLOSE</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+        <GroupedModals
+          showLoader={this.state.loaderModalVisible}
+          showConnectivity={this.state.connectivityModalVisible}
+          networkConnection={this.state.networkConnection} />
+      </View>
+    );
+  }
+
+  handleConnectivityChange(isConnected) {
+    this.setState({
+      networkConnection: isConnected,
+      connectivityModalVisible: true
+    });
+
+    setTimeout(() => {
+      this.setState({
+        connectivityModalVisible: false
+      });
+    }, 5000);
+  }
+
+  handlePage() {
+    var cc = 0;
+
     this.dynamicElements = (this.positions.length === 0 || this.candidates.length === 0 ? (
-      <Cardboard
-        additionalStyle={{
-          marginTop: 10
-        }}>
-        <View>
-          <ActivityIndicator size="large" />
-        </View>
-      </Cardboard>
+      <View>
+        <Cardboard
+          additionalStyle={{
+            marginTop: 10
+          }}>
+          <View>
+            <ActivityIndicator size="large" />
+          </View>
+        </Cardboard>
+        <Cardboard
+          additionalStyle={{
+            marginTop: 10
+          }}>
+          <View>
+            <Text>If this page got stuck loading content, pull down to refresh.</Text>
+          </View>
+        </Cardboard>
+      </View>
     ) : (
       <View>
         {this.positions.map((item, index) => {
@@ -199,11 +299,13 @@ export default class RankingScreen extends Component {
                         );
                       }
                     } else {
+                      cc++;
+                      
                       return (
                         <Cardboard
                           key={index2}
                           imageSource={require('./../assets/img/questionable.png')}
-                          title={'Candidate ' + (index2 + 1)}
+                          title={'Candidate ' + (cc)}
                           additionalStyle={{
                             width: 125
                           }}>
@@ -233,70 +335,6 @@ export default class RankingScreen extends Component {
         </View>
       </View>
     ));
-
-    return (
-      <View
-        style={styles.body}>
-        <Navbar
-          title="Worthy Votes"
-          onMenuPress={() => {
-            this.props.navigation.openDrawer();
-          }} />
-        <ScrollView
-          style={customStyles.body}
-          contentContainerStyle={{
-            paddingBottom: 30
-          }}>
-          <Text
-            style={{
-              fontSize: 30,
-              fontWeight: 'bold',
-              textAlign: 'center'
-            }}>Ranking</Text>
-          <View>{this.dynamicElements}</View>
-        </ScrollView>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.statusModalVisible}
-          onRequestClose={() => {}}>
-          <View
-            style={styles.modal}>
-            <View
-              style={styles.modalContent}>
-              <Text>Username: {this.state.username} {typeof this.state.username}</Text>
-              <Text>Password: {this.state.password} {typeof this.state.password}</Text>
-              <TouchableHighlight
-                style={styles.buttonPrimary}
-                onPress={() => {
-                  this.setModalVisible('status', false);
-                  ToastAndroid.show('Closed modal.', ToastAndroid.SHORT);
-                }}
-                underlayColor="yellow">
-                <Text style={styles.buttonContent}>CLOSE</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
-        <GroupedModals
-          showLoader={this.state.loaderModalVisible}
-          showConnectivity={this.state.connectivityModalVisible}
-          networkConnection={this.state.networkConnection} />
-      </View>
-    );
-  }
-
-  handleConnectivityChange(isConnected) {
-    this.setState({
-      networkConnection: isConnected,
-      connectivityModalVisible: true
-    });
-
-    setTimeout(() => {
-      this.setState({
-        connectivityModalVisible: false
-      });
-    }, 5000);
   }
 
   setModalVisible(modalName, isVisible) {
