@@ -51,7 +51,6 @@ export default class RankingScreen extends Component {
     this.positions = [];
     this.candidates = [];
     this.selectedCandidates = [];
-    this.dynamicElements = null;
     this.isResultsReleased = 0;
 
     this.state = {
@@ -59,7 +58,8 @@ export default class RankingScreen extends Component {
       connectivityModalVisible: false,
       statusModalVisible: false,
       loaderModalVisible: false,
-      networkConnection: false
+      networkConnection: false,
+      dynamicElements: null
     };
 
     this.requestData();
@@ -77,34 +77,6 @@ export default class RankingScreen extends Component {
         this.props.navigation.navigate('Login');
       } else {
         this.auth = JSON.parse(result);
-      }
-    });
-
-    AsyncStorage.getItem('electionPositions').then((result) => {
-      if(result !== null) {
-        this.positions = JSON.parse(result);
-
-        var pos = [];
-
-        for(var index in this.positions) {
-          this.selectedCandidates[this.positions[index].name] = {
-            id: null,
-            style: null
-          };
-
-          pos.push({
-            position: this.positions[index].name,
-            id: null
-          });
-        }
-
-        this.state.selectedCandidates = pos;
-      }
-    });
-
-    AsyncStorage.getItem('electionCandidates').then((result) => {
-      if(result !== null) {
-        this.candidates = JSON.parse(result);
       }
     });
 
@@ -179,7 +151,7 @@ export default class RankingScreen extends Component {
               fontWeight: 'bold',
               textAlign: 'center'
             }}>Ranking</Text>
-          <View>{this.dynamicElements}</View>
+          <View>{this.state.dynamicElements}</View>
         </ScrollView>
         <Modal
           animationType="fade"
@@ -228,113 +200,143 @@ export default class RankingScreen extends Component {
   handlePage() {
     var cc = 0;
 
-    this.dynamicElements = (this.positions.length === 0 || this.candidates.length === 0 ? (
-      <View>
-        <Cardboard
-          additionalStyle={{
-            marginTop: 10
-          }}>
-          <View>
-            <ActivityIndicator size="large" />
-          </View>
-        </Cardboard>
-        <Cardboard
-          additionalStyle={{
-            marginTop: 10
-          }}>
-          <View>
-            <Text>If this page got stuck loading content, pull down to refresh.</Text>
-          </View>
-        </Cardboard>
-      </View>
-    ) : (
-      <View>
-        {this.positions.map((item, index) => {
-          return (
-            <View
-              key={index}>
-              <Text
-                key={index}
-                style={{
-                  fontSize: 20,
+    AsyncStorage.getItem('electionPositions').then((result) => {
+      if(result !== null) {
+        this.positions = JSON.parse(result);
+
+        var pos = [];
+
+        for(var index in this.positions) {
+          this.selectedCandidates[this.positions[index].name] = {
+            id: null,
+            style: null
+          };
+
+          pos.push({
+            position: this.positions[index].name,
+            id: null
+          });
+        }
+
+        this.state.selectedCandidates = pos;
+      }
+    });
+
+    AsyncStorage.getItem('electionCandidates').then((result) => {
+      if(result !== null) {
+        this.candidates = JSON.parse(result);
+
+        this.setState({
+          dynamicElements: this.positions.length === 0 || this.candidates.length === 0 ? (
+            <View>
+              <Cardboard
+                additionalStyle={{
                   marginTop: 10
-                }}>Running for {item.name}</Text>
-              <ScrollView
-                horizontal={true}>{this.candidates.map((item2, index2) => {
-                  if(item2.position == item.name) {
-                    if(this.isResultsReleased == 1) {
-                      if(item2.candidacy_image !== null) {
-                        return (
-                          <Cardboard
-                            key={index2}
-                            imageSource={{
-                              uri: Config.server_url + '/' + item2.candidacy_image
-                            }}
-                            title={item2.full_name}
-                            additionalStyle={{
-                              width: 125
-                            }}>
-                            <Text
-                              style={{
-                                fontWeight: 'bold',
-                                textAlign: 'center'
-                              }}>{item2.number_of_votes_percentage}</Text>
-                          </Cardboard>
-                        );
-                      } else {
-                        return (
-                          <Cardboard
-                            key={index2}
-                            imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
-                            title={item2.full_name}
-                            additionalStyle={{
-                              width: 125
-                            }}>
-                            <Text
-                              style={{
-                                fontWeight: 'bold',
-                                textAlign: 'center'
-                              }}>{item2.number_of_votes_percentage}</Text>
-                          </Cardboard>
-                        );
-                      }
-                    } else {
-                      cc++;
-                      
-                      return (
-                        <Cardboard
-                          key={index2}
-                          imageSource={require('./../assets/img/questionable.png')}
-                          title={'Candidate ' + (cc)}
-                          additionalStyle={{
-                            width: 125
-                          }}>
-                          <Text
-                            style={{
-                              fontWeight: 'bold',
-                              textAlign: 'center'
-                            }}>{item2.number_of_votes_percentage}</Text>
-                        </Cardboard>
-                      );
-                    }
-                  }
-              })}</ScrollView>
+                }}>
+                <View>
+                  <ActivityIndicator size="large" />
+                </View>
+              </Cardboard>
+              <Cardboard
+                additionalStyle={{
+                  marginTop: 10
+                }}>
+                <View>
+                  <Text>If this page got stuck loading content, pull down to refresh.</Text>
+                </View>
+              </Cardboard>
             </View>
-          );
-        })}
-        <View
-          style={{
-            marginTop: 15
-          }}>
-          <Button
-            title="Go back to Home"
-            type="primary"
-            onPress={() => {
-              this.props.navigation.navigate('Home');
-            }} />
-        </View>
-      </View>
-    ));
+          ) : (
+            <View>
+              {this.positions.map((item, index) => {
+                return (
+                  <View
+                    key={index}>
+                    <Text
+                      key={index}
+                      style={{
+                        fontSize: 20,
+                        marginTop: 10
+                      }}>Running for {item.name}</Text>
+                    <ScrollView
+                      horizontal={true}>{this.candidates.map((item2, index2) => {
+                        if(item2.position == item.name) {
+                          if(this.isResultsReleased == 1) {
+                            if(item2.candidacy_image !== null) {
+                              return (
+                                <Cardboard
+                                  key={index2}
+                                  imageSource={{
+                                    uri: Config.server_url + '/' + item2.candidacy_image
+                                  }}
+                                  title={item2.full_name}
+                                  additionalStyle={{
+                                    width: 125
+                                  }}>
+                                  <Text
+                                    style={{
+                                      fontWeight: 'bold',
+                                      textAlign: 'center'
+                                    }}>{item2.number_of_votes_percentage}</Text>
+                                </Cardboard>
+                              );
+                            } else {
+                              return (
+                                <Cardboard
+                                  key={index2}
+                                  imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
+                                  title={item2.full_name}
+                                  additionalStyle={{
+                                    width: 125
+                                  }}>
+                                  <Text
+                                    style={{
+                                      fontWeight: 'bold',
+                                      textAlign: 'center'
+                                    }}>{item2.number_of_votes_percentage}</Text>
+                                </Cardboard>
+                              );
+                            }
+                          } else {
+                            cc++;
+                            
+                            return (
+                              <Cardboard
+                                key={index2}
+                                imageSource={require('./../assets/img/questionable.png')}
+                                title={'Candidate ' + (cc)}
+                                additionalStyle={{
+                                  width: 125
+                                }}>
+                                <Text
+                                  style={{
+                                    fontWeight: 'bold',
+                                    textAlign: 'center'
+                                  }}>{item2.number_of_votes_percentage}</Text>
+                              </Cardboard>
+                            );
+                          }
+                        }
+                    })}</ScrollView>
+                  </View>
+                );
+              })}
+              <View
+                style={{
+                  marginTop: 15
+                }}>
+                <Button
+                  title="Go back to Home"
+                  type="primary"
+                  onPress={() => {
+                    this.props.navigation.navigate('Home');
+                  }} />
+              </View>
+            </View>
+          )
+        });
+      }
+    });
   }
 
   setModalVisible(modalName, isVisible) {
