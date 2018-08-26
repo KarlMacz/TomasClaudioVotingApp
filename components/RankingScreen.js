@@ -313,7 +313,10 @@ export default class RankingScreen extends Component {
                                       </Text>
                                     )}
                                     additionalStyle={{
-                                      width: 125
+                                      width: 175
+                                    }}
+                                    additionalImageSource={{
+                                      height: 175
                                     }}>
                                     <Text
                                       style={{
@@ -346,7 +349,8 @@ export default class RankingScreen extends Component {
                                     title={item2.full_name}
                                     additionalStyle={{
                                       width: 125
-                                    }}>
+                                    }}
+                                    imageBlur={true}>
                                     <Text
                                       style={{
                                         fontWeight: 'bold',

@@ -16,6 +16,7 @@ export default class Cardboard extends Component {
   static defaultProps = {
     imageDefaultSource: null,
     imageSource: null,
+    imageBlur: false,
     bordered: false,
     title: null,
     subtitle: null,
@@ -69,7 +70,8 @@ export default class Cardboard extends Component {
                   height: 100,
                   width: '100%'
                 }, this.props.additionalImageSource]}
-                source={this.props.imageSource} />
+                source={this.props.imageSource}
+                blurRadius={this.props.imageBlur ? 5 : 0} />
             </View>
           )}
           {this.props.title === null ? null : (
