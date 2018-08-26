@@ -25,6 +25,8 @@ import {
   View
 } from 'react-native';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import moment from 'moment';
 import 'moment-duration-format';
 
@@ -59,7 +61,30 @@ export default class RankingScreen extends Component {
       statusModalVisible: false,
       loaderModalVisible: false,
       networkConnection: false,
-      dynamicElements: null
+      dynamicElements: (
+        <View>
+          <Cardboard
+            additionalStyle={{
+              marginTop: 10
+            }}>
+            <View>
+              <ActivityIndicator size="large" />
+              <Text
+                style={{
+                  textAlign: 'center'
+                }}>Loading contents. Please wait...</Text>
+            </View>
+          </Cardboard>
+          <Cardboard
+            additionalStyle={{
+              marginTop: 10
+            }}>
+            <View>
+              <Text>If this page got stuck loading content, pull down to refresh.</Text>
+            </View>
+          </Cardboard>
+        </View>
+      )
     };
 
     this.requestData();
@@ -249,6 +274,8 @@ export default class RankingScreen extends Component {
           ) : (
             <View>
               {this.positions.map((item, index) => {
+                cc = 0;
+
                 return (
                   <View
                     key={index}>
@@ -257,29 +284,91 @@ export default class RankingScreen extends Component {
                       style={{
                         fontSize: 20,
                         marginTop: 10
-                      }}>Running for {item.name}</Text>
+                      }}>{item.name}</Text>
                     <ScrollView
                       horizontal={true}>{this.candidates.map((item2, index2) => {
                         if(item2.position == item.name) {
+                          cc++;
+
                           if(this.isResultsReleased == 1) {
                             if(item2.candidacy_image !== null) {
-                              return (
-                                <Cardboard
-                                  key={index2}
-                                  imageSource={{
-                                    uri: Config.server_url + '/' + item2.candidacy_image
-                                  }}
-                                  title={item2.full_name}
-                                  additionalStyle={{
-                                    width: 125
-                                  }}>
-                                  <Text
-                                    style={{
-                                      fontWeight: 'bold',
-                                      textAlign: 'center'
-                                    }}>{item2.number_of_votes_percentage}</Text>
-                                </Cardboard>
-                              );
+                              if(cc === 1) {
+                                return (
+                                  <Cardboard
+                                    key={index2}
+                                    imageSource={{
+                                      uri: Config.server_url + '/' + item2.candidacy_image
+                                    }}
+                                    title={item2.full_name}
+                                    footer={(
+                                      <Text
+                                        style={{
+                                          color: Colors.primaryColor,
+                                          fontSize: 20,
+                                          fontWeight: 'bold',
+                                          textAlign: 'center'
+                                        }}>
+                                        <FontAwesome
+                                          name="check" /> Winner
+                                      </Text>
+                                    )}
+                                    additionalStyle={{
+                                      width: 125
+                                    }}>
+                                    <Text
+                                      style={{
+                                        fontWeight: 'bold',
+                                        textAlign: 'center'
+                                      }}>{item2.number_of_votes_percentage}</Text>
+                                    <View
+                                      style={{
+                                        marginTop: 5
+                                      }}>
+                                      <Text
+                                        style={{
+                                          fontWeight: 'bold',
+                                          textAlign: 'center'
+                                        }}>{item2.year_level}</Text>
+                                      <Text
+                                        style={{
+                                          textAlign: 'center'
+                                        }}>{item2.course}</Text>
+                                    </View>
+                                  </Cardboard>
+                                );
+                              } else {
+                                return (
+                                  <Cardboard
+                                    key={index2}
+                                    imageSource={{
+                                      uri: Config.server_url + '/' + item2.candidacy_image
+                                    }}
+                                    title={item2.full_name}
+                                    additionalStyle={{
+                                      width: 125
+                                    }}>
+                                    <Text
+                                      style={{
+                                        fontWeight: 'bold',
+                                        textAlign: 'center'
+                                      }}>{item2.number_of_votes_percentage}</Text>
+                                    <View
+                                      style={{
+                                        marginTop: 5
+                                      }}>
+                                      <Text
+                                        style={{
+                                          fontWeight: 'bold',
+                                          textAlign: 'center'
+                                        }}>{item2.year_level}</Text>
+                                      <Text
+                                        style={{
+                                          textAlign: 'center'
+                                        }}>{item2.course}</Text>
+                                    </View>
+                                  </Cardboard>
+                                );
+                              }
                             } else {
                               return (
                                 <Cardboard
@@ -294,12 +383,24 @@ export default class RankingScreen extends Component {
                                       fontWeight: 'bold',
                                       textAlign: 'center'
                                     }}>{item2.number_of_votes_percentage}</Text>
+                                  <View
+                                    style={{
+                                      marginTop: 5
+                                    }}>
+                                    <Text
+                                      style={{
+                                        fontWeight: 'bold',
+                                        textAlign: 'center'
+                                      }}>{item2.year_level}</Text>
+                                    <Text
+                                      style={{
+                                        textAlign: 'center'
+                                      }}>{item2.course}</Text>
+                                  </View>
                                 </Cardboard>
                               );
                             }
                           } else {
-                            cc++;
-                            
                             return (
                               <Cardboard
                                 key={index2}

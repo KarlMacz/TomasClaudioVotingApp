@@ -33,6 +33,7 @@ import LoginScreen from './components/LoginScreen';
 import LogoutScreen from './components/LogoutScreen';
 import HomeScreen from './components/HomeScreen';
 import VotingScreen from './components/VotingScreen';
+import VoteHistoryScreen from './components/VoteHistoryScreen';
 import RankingScreen from './components/RankingScreen';
 import Sidebar from './components/partials/Sidebar';
 
@@ -42,6 +43,9 @@ const RootDrawer = createDrawerNavigator({
   },
   Voting: {
     screen: VotingScreen
+  },
+  VoteHistory: {
+    screen: VoteHistoryScreen
   },
   Ranking: {
     screen: RankingScreen

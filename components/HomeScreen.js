@@ -55,10 +55,12 @@ export default class HomeScreen extends Component {
       loaderModalVisible: false,
       networkConnection: false,
       isElectionStarted: null,
-      remainingVotingTime: null
+      remainingVotingTime: null,
+      party_platforms: null
     };
 
     this.requestAuth();
+    this.requestData();
     this.requestSettings();
 
     AsyncStorage.getItem('auth').then((result) => {
@@ -97,6 +99,7 @@ export default class HomeScreen extends Component {
 
     this.dataInterval = setInterval(() => {
       this.requestAuth();
+      this.requestData();
       this.requestSettings();
     }, 5000);
 
@@ -165,7 +168,9 @@ export default class HomeScreen extends Component {
             this.props.navigation.openDrawer();
           }} />
         <ScrollView
-          style={customStyles.body}>
+          contentContainerStyle={{
+            padding: 15
+          }}>
           <Cardboard
             additionalStyle={{
               marginBottom: 10
@@ -225,28 +230,52 @@ export default class HomeScreen extends Component {
             </TouchableOpacity>
           ) : null}
           {this.auth.has_voted == 1 || this.state.remainingVotingTime === '00:00:00' ? (
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate('Ranking');
-              }}>
-              <Cardboard
-                additionalStyle={{
-                  marginBottom: 10
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate('Ranking');
                 }}>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 30,
-                      textAlign: 'center'
-                    }}>Candidates Ranking</Text>
-                  <Text
-                    style={{
-                      textAlign: 'center'
-                    }}>Tap here to view ranking.</Text>
-                </View>
-              </Cardboard>
-            </TouchableOpacity>
+                <Cardboard
+                  additionalStyle={{
+                    marginBottom: 10
+                  }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 30,
+                        textAlign: 'center'
+                      }}>Candidates Ranking</Text>
+                    <Text
+                      style={{
+                        textAlign: 'center'
+                      }}>Tap here to view ranking.</Text>
+                  </View>
+                </Cardboard>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate('VoteHistory');
+                }}>
+                <Cardboard
+                  additionalStyle={{
+                    marginBottom: 10
+                  }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 30,
+                        textAlign: 'center'
+                      }}>My Votes</Text>
+                    <Text
+                      style={{
+                        textAlign: 'center'
+                      }}>Tap here to view all the candidates you voted for.</Text>
+                  </View>
+                </Cardboard>
+              </TouchableOpacity>
+            </View>
           ) : null}
+          <View>{this.state.party_platforms !== null ? this.state.party_platforms : null}</View>
         </ScrollView>
         <GroupedModals
           showLoader={this.state.loaderModalVisible}
@@ -357,6 +386,60 @@ export default class HomeScreen extends Component {
   }
 
   requestData() {
+    fetch(Config.server_url + '/api/json/data/parties', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_key: Config.app_key
+      })
+    }).then((resp) => resp.json()).then((response) => {
+      if(response.status === 'ok') {
+        AsyncStorage.setItem('electionParties', JSON.stringify(response.data));
+
+        var cc = [];
+
+        for(var i = 0; i < response.data.length; i++) {
+          cc.push(
+            <Cardboard
+              bordered={true}
+              additionalStyle={{
+                marginBottom: 10
+              }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }}>{ response.data[i]['name'] }</Text>
+              <Text>{ (response.data[i]['platform'] !== null ? response.data[i]['platform'] : 'None') }</Text>
+            </Cardboard>
+          );
+        }
+
+        this.state.party_platforms = (
+          <Cardboard
+            additionalStyle={{
+              marginBottom: 10
+            }}>
+            <View>
+              <Text
+                style={{
+                  fontSize: 30,
+                  textAlign: 'center'
+                }}>Partylist Platforms</Text>
+              { cc }
+            </View>
+          </Cardboard>
+        );
+      } else {
+        ToastAndroid.show(response.message, ToastAndroid.SHORT);
+      }
+    }).catch((err) => {
+      ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
+    });
+
     fetch(Config.server_url + '/api/json/data/positions', {
       method: 'POST',
       headers: {
@@ -373,10 +456,6 @@ export default class HomeScreen extends Component {
         ToastAndroid.show(response.message, ToastAndroid.SHORT);
       }
     }).catch((err) => {
-      this.setState({
-        loaderModalVisible: false
-      });
-
       ToastAndroid.show('An error has occurred while submitting your request.', ToastAndroid.SHORT);
     });
 

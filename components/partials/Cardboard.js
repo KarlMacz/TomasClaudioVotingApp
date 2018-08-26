@@ -16,9 +16,13 @@ export default class Cardboard extends Component {
   static defaultProps = {
     imageDefaultSource: null,
     imageSource: null,
+    bordered: false,
     title: null,
     subtitle: null,
-    additionalStyle: {}
+    footer: null,
+    additionalStyle: {},
+    additionalFooterStyle: {},
+    additionalImageSource: {}
   };
 
   constructor(props) {
@@ -32,8 +36,15 @@ export default class Cardboard extends Component {
           padding: 2
         }, this.props.additionalStyle]}>
         <View
-          style={{
-            backgroundColor: "#fff",
+          style={this.props.bordered ? {
+            backgroundColor: '#fff',
+            borderRadius: 4,
+            borderColor: '#eee',
+            borderWidth: 1,
+            padding: 10,
+            width: '100%'
+          } : {
+            backgroundColor: '#fff',
             borderRadius: 4,
             elevation: 2,
             shadowColor: '#222',
@@ -49,7 +60,7 @@ export default class Cardboard extends Component {
           {this.props.imageSource === null ? null : (
             <View>
               <Image
-                style={{
+                style={[{
                   borderColor: '#eee',
                   borderTopLeftRadius: 4,
                   borderTopRightRadius: 4,
@@ -57,7 +68,7 @@ export default class Cardboard extends Component {
                   marginBottom: 5,
                   height: 100,
                   width: '100%'
-                }}
+                }, this.props.additionalImageSource]}
                 source={this.props.imageSource} />
             </View>
           )}
@@ -87,6 +98,15 @@ export default class Cardboard extends Component {
             }}>
             {this.props.children}
           </View>
+          {this.props.footer === null ? null : (
+            <View
+              style={[{
+                marginTop: 10
+              }, this.props.additionalFooterStyle
+              ]}>
+              {this.props.footer}
+            </View>
+          )}
         </View>
       </View>
     );

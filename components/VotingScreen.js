@@ -156,7 +156,7 @@ export default class VotingScreen extends Component {
                 style={{
                   fontSize: 20,
                   marginTop: 10
-                }}>Running for {item.name}</Text>
+                }}>{item.name}</Text>
               <ScrollView
                 horizontal={true}>{this.candidates.map((item2, index2) => {
                   if(item2.position == item.name) {
@@ -182,16 +182,38 @@ export default class VotingScreen extends Component {
                                 uri: Config.server_url + '/' + item2.candidacy_image
                               }}
                               title={item2.full_name}
+                              subtitle={item2.party + ' Party'}
                               additionalStyle={{
                                 width: 125
-                              }}></Cardboard>
+                              }}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  textAlign: 'center'
+                                }}>{item2.year_level}</Text>
+                              <Text
+                                style={{
+                                  textAlign: 'center'
+                                }}>{item2.course}</Text>
+                            </Cardboard>
                           ) : (
                             <Cardboard
                               imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
                               title={item2.full_name}
+                              subtitle={item2.party + ' Party'}
                               additionalStyle={{
                                 width: 125
-                              }}></Cardboard>
+                              }}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  textAlign: 'center'
+                                }}>{item2.year_level}</Text>
+                              <Text
+                                style={{
+                                  textAlign: 'center'
+                                }}>{item2.course}</Text>
+                            </Cardboard>
                           )}
                         </TouchableOpacity>
                       );
@@ -217,16 +239,38 @@ export default class VotingScreen extends Component {
                                 uri: Config.server_url + '/' + item2.candidacy_image
                               }}
                               title={item2.full_name}
+                              subtitle={item2.party + ' Party'}
                               additionalStyle={{
                                 width: 125
-                              }}></Cardboard>
+                              }}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  textAlign: 'center'
+                                }}>{item2.year_level}</Text>
+                              <Text
+                                style={{
+                                  textAlign: 'center'
+                                }}>{item2.course}</Text>
+                            </Cardboard>
                           ) : (
                             <Cardboard
                               imageSource={item2.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
                               title={item2.full_name}
+                              subtitle={item2.party + ' Party'}
                               additionalStyle={{
                                 width: 125
-                              }}></Cardboard>
+                              }}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  textAlign: 'center'
+                                }}>{item2.year_level}</Text>
+                              <Text
+                                style={{
+                                  textAlign: 'center'
+                                }}>{item2.course}</Text>
+                            </Cardboard>
                           )}
                         </TouchableOpacity>
                       );
