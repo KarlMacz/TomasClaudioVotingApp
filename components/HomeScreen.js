@@ -412,7 +412,7 @@ export default class HomeScreen extends Component {
                 style={{
                   fontSize: 20,
                   fontWeight: 'bold'
-                }}>{ response.data[i]['name'] }</Text>
+                }}>{ response.data[i]['name'] + ' Partylist' }</Text>
               <Text>{ (response.data[i]['platform'] !== null ? response.data[i]['platform'] : 'None') }</Text>
             </Cardboard>
           );

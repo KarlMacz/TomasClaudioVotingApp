@@ -257,7 +257,7 @@ export default class VoteHistoryScreen extends Component {
                         uri: Config.server_url + '/' + item.candidacy_image
                       }}
                       title={item.full_name}
-                      subtitle={item.party + ' Party'}
+                      subtitle={item.party + ' Partylist'}
                       additionalImageSource={{
                         height: 200
                       }}>
@@ -273,7 +273,7 @@ export default class VoteHistoryScreen extends Component {
                       key={index2}
                       imageSource={item.gender === 'Female' ? (require('./../assets/img/female.png')) : (require('./../assets/img/male.png'))}
                       title={item.full_name}
-                      subtitle={item.party + ' Party'}
+                      subtitle={item.party + ' Partylist'}
                       additionalStyle={{
                         width: 125
                       }}
